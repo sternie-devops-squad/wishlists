@@ -13,19 +13,20 @@
 # limitations under the License.
 
 """
-Models for Pet Demo Service
-
+Models for Wishlist Service
 All of the models are stored in this module
 
 Models
 ------
-Pet - A Pet used in the Pet Store
+Wishlist - A wishlist used to store items desired to be bought
 
 Attributes:
 -----------
-name (string) - the name of the pet
-category (string) - the category the pet belongs to (i.e., dog, cat)
-available (boolean) - True for pets that are available for adoption
+id (string) - the id of the wishlist
+name (string) - the name of the wishlist
+user (int) - the id of the user the wishlist 'belongs to'
+items (boolean) - the list of items stored in the wishlist
+
 
 """
 import logging
@@ -41,24 +42,15 @@ db = SQLAlchemy()
 
 def init_db(app):
     """Initialize the SQLAlchemy app"""
-    Pet.init_db(app)
+    Wishlist.init_db(app)
 
 
 class DataValidationError(Exception):
     """Used for an data validation errors when deserializing"""
 
-
-class Gender(Enum):
-    """Enumeration of valid Pet Genders"""
-
-    MALE = 0
-    FEMALE = 1
-    UNKNOWN = 3
-
-
-class Pet(db.Model):
+class Wishlist(db.Model):
     """
-    Class that represents a Pet
+    Class that represents a Wishlist
 
     This version uses a relational database for persistence which is hidden
     from us by SQLAlchemy's object relational mappings (ORM)
@@ -70,21 +62,21 @@ class Pet(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(63), nullable=False)
     category = db.Column(db.String(63), nullable=False)
-    available = db.Column(db.Boolean(), nullable=False, default=False)
-    gender = db.Column(
-        db.Enum(Gender), nullable=False, server_default=(Gender.UNKNOWN.name)
-    )
+    user = db.Column(db.Integer)
+    favorite = db.Column(db.Boolean(), nullable=False, default=False)
+
+    ##TODO: Add list of items here
 
     ##################################################
     # INSTANCE METHODS
     ##################################################
 
     def __repr__(self):
-        return "<Pet %r id=[%s]>" % (self.name, self.id)
+        return "<Wishlist %r id=[%s]>" % (self.name, self.id)
 
     def create(self):
         """
-        Creates a Pet to the database
+        Creates a Wishlist to the database
         """
         logger.info("Creating %s", self.name)
         # id must be none to generate next primary key
@@ -94,7 +86,7 @@ class Pet(db.Model):
 
     def update(self):
         """
-        Updates a Pet to the database
+        Updates a Wishlist to the database
         """
         logger.info("Saving %s", self.name)
         if not self.id:
@@ -102,45 +94,48 @@ class Pet(db.Model):
         db.session.commit()
 
     def delete(self):
-        """Removes a Pet from the data store"""
+        """Removes a Wishlist from the data store"""
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
 
     def serialize(self) -> dict:
-        """Serializes a Pet into a dictionary"""
+        """Serializes a Wishlist into a dictionary"""
         return {
             "id": self.id,
             "name": self.name,
             "category": self.category,
-            "available": self.available,
-            "gender": self.gender.name,  # convert enum to string
+            "user": self.user,
+            "favorite": self.favorite,
+            #TODO: "items": [],
         }
 
     def deserialize(self, data: dict):
         """
-        Deserializes a Pet from a dictionary
+        Deserializes a Wishlist from a dictionary
         Args:
-            data (dict): A dictionary containing the Pet data
+            data (dict): A dictionary containing the Wishlist data
         """
         try:
+            self.id = data["id"]
             self.name = data["name"]
             self.category = data["category"]
-            if isinstance(data["available"], bool):
-                self.available = data["available"]
+            self.user = data["user"]
+            #wishlist_items
+            if isinstance(data["favorite"], bool):
+                self.favorite = data["favorite"]
             else:
                 raise DataValidationError(
-                    "Invalid type for boolean [available]: "
-                    + str(type(data["available"]))
+                    "Invalid type for boolean [favorite]: "
+                    + str(type(data["favorite"]))
                 )
-            self.gender = getattr(Gender, data["gender"])  # create enum from string
         except AttributeError as error:
             raise DataValidationError("Invalid attribute: " + error.args[0])
         except KeyError as error:
-            raise DataValidationError("Invalid pet: missing " + error.args[0])
+            raise DataValidationError("Invalid wishlist: missing " + error.args[0])
         except TypeError as error:
             raise DataValidationError(
-                "Invalid pet: body of request contained bad or no data " + str(error)
+                "Invalid wishlist: body of request contained bad or no data " + str(error)
             )
         return self
 
@@ -164,60 +159,60 @@ class Pet(db.Model):
 
     @classmethod
     def all(cls) -> list:
-        """Returns all of the Pets in the database"""
-        logger.info("Processing all Pets")
+        """Returns all of the Wishlist in the database"""
+        logger.info("Processing all Wishlists")
         return cls.query.all()
 
     @classmethod
-    def find(cls, pet_id: int):
-        """Finds a Pet by it's ID
+    def find(cls, wishlist_id: int):
+        """Finds a Wishlist by it's ID
 
-        :param pet_id: the id of the Pet to find
-        :type pet_id: int
+        :param wishlist_id: the id of the Wishlist to find
+        :type wishlist_id: int
 
-        :return: an instance with the pet_id, or None if not found
-        :rtype: Pet
+        :return: an instance with the wishlist_id, or None if not found
+        :rtype: Wishlist
 
         """
-        logger.info("Processing lookup for id %s ...", pet_id)
-        return cls.query.get(pet_id)
+        logger.info("Processing lookup for id %s ...", wishlist_id)
+        return cls.query.get(wishlist_id)
 
     @classmethod
-    def find_or_404(cls, pet_id: int):
-        """Find a Pet by it's id
+    def find_or_404(cls, wishlist_id: int):
+        """Find a Wishlist by it's id
 
-        :param pet_id: the id of the Pet to find
-        :type pet_id: int
+        :param wishlist_id: the id of the Wishlist to find
+        :type wishlist_id: int
 
-        :return: an instance with the pet_id, or 404_NOT_FOUND if not found
-        :rtype: Pet
+        :return: an instance with the wishlist_id, or 404_NOT_FOUND if not found
+        :rtype: Wishlist
 
         """
-        logger.info("Processing lookup or 404 for id %s ...", pet_id)
-        return cls.query.get_or_404(pet_id)
+        logger.info("Processing lookup or 404 for id %s ...", wishlist_id)
+        return cls.query.get_or_404(wishlist_id)
 
     @classmethod
     def find_by_name(cls, name: str) -> list:
-        """Returns all Pets with the given name
+        """Returns all Wishlists with the given name
 
-        :param name: the name of the Pets you want to match
+        :param name: the name of the Wishlists you want to match
         :type name: str
 
-        :return: a collection of Pets with that name
+        :return: a collection of Wishlists with that name
         :rtype: list
 
         """
         logger.info("Processing name query for %s ...", name)
         return cls.query.filter(cls.name == name)
-
+    
     @classmethod
     def find_by_category(cls, category: str) -> list:
-        """Returns all of the Pets in a category
+        """Returns all of the Wishlists in a category
 
-        :param category: the category of the Pets you want to match
+        :param category: the category of the Wishlists you want to match
         :type category: str
 
-        :return: a collection of Pets in that category
+        :return: a collection of Wishlists in that category
         :rtype: list
 
         """
@@ -225,29 +220,43 @@ class Pet(db.Model):
         return cls.query.filter(cls.category == category)
 
     @classmethod
-    def find_by_availability(cls, available: bool = True) -> list:
-        """Returns all Pets by their availability
+    def find_by_user(cls, user: str) -> list:
+        """Returns all of the Wishlists for a user
 
-        :param available: True for pets that are available
-        :type available: str
+        :param user: the user of the Wishlists you want to match
+        :type user: str
 
-        :return: a collection of Pets that are available
+        :return: a collection of Wishlists in that user
         :rtype: list
 
         """
-        logger.info("Processing available query for %s ...", available)
-        return cls.query.filter(cls.available == available)
+        logger.info("Processing user query for %s ...", user)
+        return cls.query.filter(cls.user == user)
 
     @classmethod
-    def find_by_gender(cls, gender: Gender = Gender.UNKNOWN) -> list:
-        """Returns all Pets by their Gender
+    def find_by_favorite(cls, favorite: bool = True) -> list:
+        """Returns all Wishlists by their favorite status
 
-        :param gender: values are ['MALE', 'FEMALE', 'UNKNOWN']
-        :type available: enum
+        :param favorite: True for wishlists that are favorited
+        :type favorite: str
 
-        :return: a collection of Pets that are available
+        :return: a collection of wishlists that are favorite
         :rtype: list
 
         """
-        logger.info("Processing gender query for %s ...", gender.name)
-        return cls.query.filter(cls.gender == gender)
+        logger.info("Processing favorite query for %s ...", favorite)
+        return cls.query.filter(cls.favorite == favorite)
+
+    # @classmethod
+    # def find_by_gender(cls, gender: Gender = Gender.UNKNOWN) -> list:
+    #     """Returns all Pets by their Gender
+
+    #     :param gender: values are ['MALE', 'FEMALE', 'UNKNOWN']
+    #     :type available: enum
+
+    #     :return: a collection of Pets that are available
+    #     :rtype: list
+
+    #     """
+    #     logger.info("Processing gender query for %s ...", gender.name)
+    #     return cls.query.filter(cls.gender == gender)

@@ -17,19 +17,19 @@ Test Factory to make fake objects for testing
 """
 import factory
 from factory.fuzzy import FuzzyChoice
-from service.models import Pet, Gender
+from service.models import Wishlist
 
 
-class PetFactory(factory.Factory):
-    """Creates fake pets that you don't have to feed"""
+class WishlistFactory(factory.Factory):
+    """Creates fake wishlists that you don't have to populate"""
 
     class Meta:  # pylint: disable=too-few-public-methods
         """Maps factory to data model"""
 
-        model = Pet
+        model = Wishlist
 
     id = factory.Sequence(lambda n: n)
     name = factory.Faker("first_name")
-    category = FuzzyChoice(choices=["dog", "cat", "bird", "fish"])
-    available = FuzzyChoice(choices=[True, False])
-    gender = FuzzyChoice(choices=[Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
+    category = FuzzyChoice(choices=["personal", "home", "gifts", "tech"])
+    favorite = FuzzyChoice(choices=[True, False])
+    user = FuzzyChoice(choices=[1,2,3,4])
