@@ -89,6 +89,16 @@ $ flake8 --count --max-complexity=10 --statistics service
 
 I've also included `pylint` in the requirements. Visual Studio Code is configured to use `pylint` while you are editing. This catches a lot of errors while you code that would normally be caught at runtime. It's a good idea to always code with pylint active.
 
+## Running the service
+
+The project uses _honcho_ which gets it's commands from the `Procfile`. To start the service simply use:
+
+```shell
+$ honcho start
+```
+
+You should be able to reach the service at: http://localhost:8000. The port that is used is controlled by an environment variable defined in the `.flaskenv` file which Flask uses to load it's configuration from the environment by default.
+
 ## Shutdown development environment
 
 If you are using Visual Studio Code with Docker, simply existing Visual Studio Code will stop the docker containers. They will start up again the next time you need to develop as long as you don't manually delete them.
@@ -105,6 +115,13 @@ If the VM is no longer needed you can remove it with:
 ```shell
 $ vagrant destroy
 ```
+
+## What's featured in the project?
+
+    * app/routes.py -- the main Service routes using Python Flask
+    * app/models.py -- the data model using SQLAlchemy
+    * tests/test_routes.py -- test cases against the Wishlist service
+    * tests/test_models.py -- test cases against the Wishlist model
 
 ## License
 
