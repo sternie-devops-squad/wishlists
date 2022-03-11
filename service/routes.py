@@ -8,15 +8,13 @@ import os
 import sys
 import logging
 from flask import jsonify, request, url_for, make_response, abort
-from . import status  # HTTP Status Codes
 
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
 # variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
 from service.models import Wishlist, Item, DataValidationError
-
-# Import Flask application
-from . import app
+from . import status  # HTTP Status Codes
+from . import app # Import Flask application
 
 ######################################################################
 # GET INDEX
@@ -46,18 +44,21 @@ def init_db():
 
 
 ######################################################################
-# LIST ALL ACCOUNTS
+# CREATE A NEW WISHLIST
 ######################################################################
-@app.route("/wishlists", methods=["GET"])
-def list_wishlists():
-    """ Returns all of the Wishlists """
-    app.logger.info("Request for Wishlist list")
-    wishlists = []
-    name = request.args.get("name")
-    if name:
-        wishlists = Wishlist.find_by_name(name)
-    else:
-        wishlists = Wishlist.all()
-
-    results = [wishlist.serialize() for wishlist in wishlists]
-    return make_response(jsonify(results), status.HTTP_200_OK)
+@app.route("/wishlists", methods=["POST"])
+def create_wishlists():
+    """
+    Creates a Wishlist
+    This endpoint will create an Wishlist based the data in the body that is posted
+    """
+    app.logger.info("Request to create an Wishlist")
+    check_content_type("application/json")
+    wishlist = Wishlist()
+    wishlist.deserialize(request.get_json())
+    wishlist.create()
+    message = wishlist.serialize()
+    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
+    return make_response(
+        jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
+    )

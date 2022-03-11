@@ -79,14 +79,74 @@ class TestWishlist(unittest.TestCase):
 
     def test_create_a_wishlist(self):
         """ Create a Wishlist and assert that it exists """
-        fake_account = WishlistFactory()
+        fake_wishlist = WishlistFactory()
         wishlist = Wishlist(
-            name=fake_account.name, 
-            user_id=fake_account.user_id, 
-            date_created=fake_account.date_created, 
+            name=fake_wishlist.name, 
+            user_id=fake_wishlist.user_id, 
+            date_created=fake_wishlist.date_created, 
         )
         self.assertTrue(wishlist != None)
         self.assertEqual(wishlist.id, None)
-        self.assertEqual(wishlist.name, fake_account.name)
-        self.assertEqual(wishlist.user_id, fake_account.user_id)
-        self.assertEqual(wishlist.date_created, fake_account.date_created)
+        self.assertEqual(wishlist.name, fake_wishlist.name)
+        self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
+        self.assertEqual(wishlist.date_created, fake_wishlist.date_created)
+
+    def test_add_a_wishlist(self):
+        """ Create a Wishlist and add it to the database """
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+        wishlist = self._create_wishlist()
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertEqual(wishlist.id, 1)
+        wishlists = wishlist.all()
+        self.assertEqual(len(wishlists), 1)
+
+    # def test_serialize_a_wishlist(self):
+    #     """Test serialization of a Wishlist"""
+    #     item = self._create_item()
+    #     wishlist = self._create_wishlist(items=[item])
+    #     serial_wishlist = wishlist.serialize()
+    #     self.assertEqual(serial_wishlist['id'], wishlist.id)
+    #     self.assertEqual(serial_wishlist['name'], wishlist.name)
+    #     self.assertEqual(serial_wishlist['user_id'], wishlist.user_id)
+    #     self.assertEqual(len(serial_wishlist['items']), 1)
+    #     items = serial_wishlist['items']
+    #     self.assertEqual(items[0]['id'], item.id)
+    #     self.assertEqual(items[0]['wishlist_id'], item.wishlist_id)
+    #     self.assertEqual(items[0]['name'], item.name)
+    #     self.assertEqual(items[0]['category'], item.category)
+    #     self.assertEqual(items[0]['in_stock'], item.in_stock)
+    #     self.assertEqual(items[0]['price'], item.price)
+    #     self.assertEqual(items[0]['purchased'], item.purchased)
+
+    # def test_deserialize_a_wishlist(self):
+    #     """ Deserialize a wishlist """
+    #     item = self._create_item()
+    #     wishlist = self._create_wishlist(items=[item])
+    #     serial_wishlist = wishlist.serialize()
+    #     new_wishlist = Wishlist()
+    #     new_wishlist.deserialize(serial_wishlist)
+    #     self.assertEqual(new_wishlist.id, wishlist.id)
+    #     self.assertEqual(new_wishlist.name, wishlist.name)
+    #     self.assertEqual(new_wishlist.user_id, wishlist.user_id)
+
+    # def test_deserialize_with_key_error(self):
+    #     """ Deserialize a wishlist with a KeyError """
+    #     wishlist = Wishlist()
+    #     self.assertRaises(DataValidationError, wishlist.deserialize, {})
+
+    # def test_deserialize_with_type_error(self):
+    #     """ Deserialize an wishlist with a TypeError """
+    #     wishlist = Wishlist()
+    #     self.assertRaises(DataValidationError, wishlist.deserialize, [])
+
+    # def test_deserialize_item_key_error(self):
+    #     """ Deserialize a wishlist with a KeyError """
+    #     item = Item()
+    #     self.assertRaises(DataValidationError, item.deserialize, {})
+
+    # def test_deserialize_item_type_error(self):
+    #     """ Deserialize a wishlist with a TypeError """
+    #     item = Item()
+    #     self.assertRaises(DataValidationError, item.deserialize, [])

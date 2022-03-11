@@ -1,5 +1,5 @@
 """
-Models for Account
+Models for Wishlist
 
 All of the models are stored in this module
 """
@@ -26,7 +26,7 @@ class PersistentBase():
 
     def create(self):
         """
-        Creates a Account to the database
+        Creates a Wishlist to the database
         """
         logger.info("Creating %s", self.name)
         self.id = None  # id must be none to generate next primary key
@@ -35,16 +35,40 @@ class PersistentBase():
 
     def save(self):
         """
-        Updates a Account to the database
+        Updates a Wishlist to the database
         """
         logger.info("Saving %s", self.name)
         db.session.commit()
 
     def delete(self):
-        """ Removes a Account from the data store """
+        """ Removes a Wishlist from the data store """
         logger.info("Deleting %s", self.name)
         db.session.delete(self)
         db.session.commit()
+
+
+    def serialize(self):
+        """ Serializes a Wishlist into a dictionary """
+        return {"id": self.id, "name": self.name}
+
+    def deserialize(self, data):
+        """
+        Deserializes a Wishlist from a dictionary
+
+        Args:
+            data (dict): A dictionary containing the resource data
+        """
+        try:
+            self.name = data["name"]
+        except KeyError as error:
+            raise DataValidationError(
+                "Invalid Wishlist: missing " + error.args[0]
+            )
+        except TypeError as error:
+            raise DataValidationError(
+                "Invalid Wishlist: body of request contained bad or no data"
+            )
+        return self
 
     @classmethod
     def init_db(cls, app):
@@ -67,7 +91,17 @@ class PersistentBase():
         """ Finds a record by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
+        
+    @classmethod
+    def find_by_name(cls, name):
+        """Returns all YourResourceModels with the given name
 
+        Args:
+            name (string): the name of the YourResourceModels you want to match
+        """
+        logger.info("Processing name query for %s ...", name)
+        return cls.query.filter(cls.name == name)
+        
     @classmethod
     def find_or_404(cls, by_id):
         """ Find a record by it's id """
@@ -108,7 +142,7 @@ class Item(db.Model, PersistentBase):
             "category": self.category,
             "in_stock": self.in_stock,
             "price": self.price,
-            "purchased": self.postalcode
+            "purchased": self.purchased
         }
 
     def deserialize(self, data):
@@ -154,14 +188,14 @@ class Wishlist(db.Model, PersistentBase):
 
     def __repr__(self):
         return "<Wishlist %r id=[%s]>" % (self.name, self.id)
-
+    
     def serialize(self):
         """ Serializes a Wishlist into a dictionary """
         wishlist = {
             "id": self.id,
             "name": self.name,
             "user_id": self.user_id,
-            "date_created": self.date_joined.strftime(DATETIME_FORMAT),
+            "date_created": self.date_created.strftime(DATETIME_FORMAT),
             "items": []
         }
         for wishlist in self.wishlists:
