@@ -13,34 +13,36 @@
 # limitations under the License.
 
 """
-Wishlist Factory to make fake objects for testing
+Test Factory to make fake objects for testing
 """
 import factory
 from datetime import datetime
 from factory.fuzzy import FuzzyChoice
-from service.models import Wishlist, Item
+from service.models import Account, Address
 
-class ItemFactory(factory.Factory):
-    """ Creates fake Items """
-
-    class Meta:
-        model = Item
-
-    id = factory.Sequence(lambda n: n)
-    name = FuzzyChoice(choices=["basketball", "lamp", "chair"])
-    category = FuzzyChoice(choices=["sports", "home_decor", "other"])
-    in_stock = FuzzyChoice(choices=[True, False])
-    price = FuzzyChoice(choices=[5, 10, 15, 20, 25, 50, 75, 100])
-    purchased = FuzzyChoice(choices=[True, False])
-
-
-class WishlistFactory(factory.Factory):
-    """ Creates fake Wishlists """
+class AddressFactory(factory.Factory):
+    """ Creates fake Addresses """
 
     class Meta:
-        model = Wishlist
+        model = Address
 
     id = factory.Sequence(lambda n: n)
-    name = FuzzyChoice(choices=["Personal"])
-    user_id = FuzzyChoice(choices=[1, 2])
-    date_created = factory.LazyFunction(datetime.utcnow)
+#    account_id = ???
+    name = FuzzyChoice(choices=["home", "work", "other"])
+    street = factory.Faker("street_address")
+    city = factory.Faker("city")
+    state = factory.Faker("state_abbr")
+    postalcode = factory.Faker("postalcode")
+
+
+class AccountFactory(factory.Factory):
+    """ Creates fake Accounts """
+
+    class Meta:
+        model = Account
+
+    id = factory.Sequence(lambda n: n)
+    name = factory.Faker("name")
+    email = factory.Faker("email")
+    phone_number = factory.Faker("phone_number")
+    date_joined = factory.LazyFunction(datetime.utcnow)
