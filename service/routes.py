@@ -13,15 +13,15 @@
 # limitations under the License.
 
 """
-Account Service
+Wishlist Service
 
-This microservice handles the lifecycle of Accounts
+This microservice handles the lifecycle of Wishlists
 """
 import os
 import sys
 import logging
 from flask import jsonify, request, url_for, make_response, abort
-from service.models import Account, Address, DataValidationError
+from service.models import Wishlist, Item, DataValidationError
 from . import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
@@ -34,206 +34,206 @@ def index():
     """ Root URL response """
     return (
         jsonify(
-            name="Account REST API Service",
+            name="Wishlist REST API Service",
             version="1.0",
-            paths=url_for("list_accounts", _external=True),
+            paths=url_for("list_wishlists", _external=True),
         ),
         status.HTTP_200_OK,
     )
 
 ######################################################################
-# LIST ALL ACCOUNTS
+# LIST ALL WISHLISTS
 ######################################################################
-@app.route("/accounts", methods=["GET"])
-def list_accounts():
-    """ Returns all of the Accounts """
-    app.logger.info("Request for Account list")
-    accounts = []
+@app.route("/wishlists", methods=["GET"])
+def list_wishlists():
+    """ Returns all of the Wishlists """
+    app.logger.info("Request for Wishlist list")
+    wishlists = []
     name = request.args.get("name")
     if name:
-        accounts = Account.find_by_name(name)
+        wishlists = Wishlist.find_by_name(name)
     else:
-        accounts = Account.all()
+        wishlists = Wishlist.all()
 
-    results = [account.serialize() for account in accounts]
+    results = [wishlist.serialize() for wishlist in wishlists]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
 
 ######################################################################
-# RETRIEVE AN ACCOUNT
+# RETRIEVE AN WISHLIST
 ######################################################################
-@app.route("/accounts/<int:account_id>", methods=["GET"])
-def get_accounts(account_id):
+@app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
+def get_wishlists(wishlist_id):
     """
-    Retrieve a single Account
+    Retrieve a single Wishlist
 
-    This endpoint will return an Account based on it's id
+    This endpoint will return an Wishlist based on it's id
     """
-    app.logger.info("Request for Account with id: %s", account_id)
-    account = Account.find(account_id)
-    if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{account_id}' could not be found.")
+    app.logger.info("Request for Wishlist with id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' could not be found.")
 
-    return make_response(jsonify(account.serialize()), status.HTTP_200_OK)
+    return make_response(jsonify(wishlist.serialize()), status.HTTP_200_OK)
 
 
 ######################################################################
-# CREATE A NEW ACCOUNT
+# CREATE A NEW WISHLIST
 ######################################################################
-@app.route("/accounts", methods=["POST"])
-def create_accounts():
+@app.route("/wishlists", methods=["POST"])
+def create_wishlists():
     """
-    Creates an Account
-    This endpoint will create an Account based the data in the body that is posted
+    Creates an Wishlist
+    This endpoint will create an Wishlist based the data in the body that is posted
     """
-    app.logger.info("Request to create an Account")
+    app.logger.info("Request to create an Wishlist")
     check_content_type("application/json")
-    account = Account()
-    account.deserialize(request.get_json())
-    account.create()
-    message = account.serialize()
-    location_url = url_for("get_accounts", account_id=account.id, _external=True)
+    wishlist = Wishlist()
+    wishlist.deserialize(request.get_json())
+    wishlist.create()
+    message = wishlist.serialize()
+    location_url = url_for("get_wishlists", wishlist_id=wishlist.id, _external=True)
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
 
 ######################################################################
-# UPDATE AN EXISTING ACCOUNT
+# UPDATE AN EXISTING WISHLIST
 ######################################################################
-@app.route("/accounts/<int:account_id>", methods=["PUT"])
-def update_accounts(account_id):
+@app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
+def update_wishlists(wishlist_id):
     """
-    Update an Account
+    Update an Wishlist
 
-    This endpoint will update an Account based the body that is posted
+    This endpoint will update an Wishlist based the body that is posted
     """
-    app.logger.info("Request to update account with id: %s", account_id)
+    app.logger.info("Request to update wishlist with id: %s", wishlist_id)
     check_content_type("application/json")
-    account = Account.find(account_id)
-    if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{account_id}' was not found.")
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' was not found.")
 
-    account.deserialize(request.get_json())
-    account.id = account_id
-    account.update()
-    return make_response(jsonify(account.serialize()), status.HTTP_200_OK)
+    wishlist.deserialize(request.get_json())
+    wishlist.id = wishlist_id
+    wishlist.update()
+    return make_response(jsonify(wishlist.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# DELETE AN ACCOUNT
+# DELETE AN WISHLIST
 ######################################################################
-@app.route("/accounts/<int:account_id>", methods=["DELETE"])
-def delete_accounts(account_id):
+@app.route("/wishlists/<int:wishlist_id>", methods=["DELETE"])
+def delete_wishlists(wishlist_id):
     """
-    Delete an Account
+    Delete an Wishlist
 
-    This endpoint will delete an Account based the id specified in the path
+    This endpoint will delete an Wishlist based the id specified in the path
     """
-    app.logger.info("Request to delete account with id: %s", account_id)
-    account = Account.find(account_id)
-    if account:
-        account.delete()
+    app.logger.info("Request to delete wishlist with id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if wishlist:
+        wishlist.delete()
     return make_response("", status.HTTP_204_NO_CONTENT)
 
 
 #---------------------------------------------------------------------
-#                A D D R E S S   M E T H O D S
+#                I T E M   M E T H O D S
 #---------------------------------------------------------------------
 
 
 ######################################################################
-# LIST ADDRESSES
+# LIST ITEMS
 ######################################################################
-@app.route("/accounts/<int:account_id>/addresses", methods=["GET"])
-def list_addresses(account_id):
-    """ Returns all of the Addresses for an Account """
-    app.logger.info("Request for all Addresses for Account with id: %s", account_id)
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["GET"])
+def list_items(wishlist_id):
+    """ Returns all of the Items for an Wishlist """
+    app.logger.info("Request for all Items for Wishlist with id: %s", wishlist_id)
 
-    account = Account.find(account_id)
-    if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{account_id}' could not be found.")
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' could not be found.")
 
-    results = [address.serialize() for address in account.addresses]
+    results = [item.serialize() for item in wishlist.items]
     return make_response(jsonify(results), status.HTTP_200_OK)
 
 ######################################################################
-# ADD AN ADDRESS TO AN ACCOUNT
+# ADD AN ITEM TO AN WISHLIST
 ######################################################################
-@app.route('/accounts/<int:account_id>/addresses', methods=['POST'])
-def create_addresses(account_id):
+@app.route('/wishlists/<int:wishlist_id>/items', methods=['POST'])
+def create_items(wishlist_id):
     """
-    Create an Address on an Account
+    Create an Item on an Wishlist
 
-    This endpoint will add an address to an account
+    This endpoint will add an item to an wishlist
     """
-    app.logger.info("Request to create an Address for Account with id: %s", account_id)
+    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
     check_content_type("application/json")
 
-    account = Account.find(account_id)
-    if not account:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{account_id}' could not be found.")
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' could not be found.")
 
-    address = Address()
-    address.deserialize(request.get_json())
-    account.addresses.append(address)
-    account.update()
-    message = address.serialize()
+    item = Item()
+    item.deserialize(request.get_json())
+    wishlist.items.append(item)
+    wishlist.update()
+    message = item.serialize()
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 ######################################################################
-# RETRIEVE AN ADDRESS FROM ACCOUNT
+# RETRIEVE AN ITEM FROM WISHLIST
 ######################################################################
-@app.route('/accounts/<int:account_id>/addresses/<int:address_id>', methods=['GET'])
-def get_addresses(account_id, address_id):
+@app.route('/wishlists/<int:wishlist_id>/items/<int:item_id>', methods=['GET'])
+def get_items(wishlist_id, item_id):
     """
-    Get an Address
+    Get an Item
 
-    This endpoint returns just an address
+    This endpoint returns just an item
     """
-    app.logger.info("Request to retrieve Address %s for Account id: %s", (address_id, account_id))
+    app.logger.info("Request to retrieve Item %s for Wishlist id: %s", (item_id, wishlist_id))
 
-    address = Address.find(address_id)
-    if not address:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{address_id}' could not be found.")
+    item = Item.find(item_id)
+    if not item:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{item_id}' could not be found.")
 
-    return make_response(jsonify(address.serialize()), status.HTTP_200_OK)
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# UPDATE AN ADDRESS
+# UPDATE AN ITEM
 ######################################################################
-@app.route("/accounts/<int:account_id>/addresses/<int:address_id>", methods=["PUT"])
-def update_addresses(account_id, address_id):
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
+def update_items(wishlist_id, item_id):
     """
-    Update an Address
+    Update an Item
 
-    This endpoint will update an Address based the body that is posted
+    This endpoint will update an Item based the body that is posted
     """
-    app.logger.info("Request to update Address %s for Account id: %s", (address_id, account_id))
+    app.logger.info("Request to update Item %s for Wishlist id: %s", (item_id, wishlist_id))
     check_content_type("application/json")
 
-    address = Address.find(address_id)
-    if not address:
-        abort(status.HTTP_404_NOT_FOUND, f"Account with id '{address_id}' could not be found.")
+    item = Item.find(item_id)
+    if not item:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{item_id}' could not be found.")
 
-    address.deserialize(request.get_json())
-    address.id = address_id
-    address.update()
-    return make_response(jsonify(address.serialize()), status.HTTP_200_OK)
+    item.deserialize(request.get_json())
+    item.id = item_id
+    item.update()
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# DELETE AN ADDRESS
+# DELETE AN ITEM
 ######################################################################
-@app.route("/accounts/<int:account_id>/addresses/<int:address_id>", methods=["DELETE"])
-def delete_addresses(account_id, address_id):
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["DELETE"])
+def delete_items(wishlist_id, item_id):
     """
-    Delete an Address
+    Delete an Item
 
-    This endpoint will delete an Address based the id specified in the path
+    This endpoint will delete an Item based the id specified in the path
     """
-    app.logger.info("Request to delete Address %s for Account id: %s", (address_id, account_id))
+    app.logger.info("Request to delete Item %s for Wishlist id: %s", (item_id, wishlist_id))
 
-    address = Address.find(address_id)
-    if address:
-        address.delete()
+    item = Item.find(item_id)
+    if item:
+        item.delete()
 
     return make_response("", status.HTTP_204_NO_CONTENT)
 
@@ -246,7 +246,7 @@ def delete_addresses(account_id, address_id):
 def init_db():
     """ Initializes the SQLAlchemy app """
     global app
-    Account.init_db(app)
+    Wishlist.init_db(app)
 
 def check_content_type(content_type):
     """ Checks that the media type is correct """

@@ -18,31 +18,30 @@ Test Factory to make fake objects for testing
 import factory
 from datetime import datetime
 from factory.fuzzy import FuzzyChoice
-from service.models import Account, Address
+from service.models import Wishlist, Item
 
-class AddressFactory(factory.Factory):
-    """ Creates fake Addresses """
+class ItemFactory(factory.Factory):
+    """ Creates fake Items """
 
     class Meta:
-        model = Address
+        model = Item
 
     id = factory.Sequence(lambda n: n)
-#    account_id = ???
-    name = FuzzyChoice(choices=["home", "work", "other"])
-    street = factory.Faker("street_address")
-    city = factory.Faker("city")
-    state = factory.Faker("state_abbr")
-    postalcode = factory.Faker("postalcode")
+#    wishlist_id = ???
+    name = FuzzyChoice(choices=["book", "basketball", "other"])
+    category = FuzzyChoice(choices=["home decor", "sports", "music", "apparel"])
+    price = factory.Faker([5,10,15,20,25,50,75,100])
+    in_stock = FuzzyChoice(choices=[True, False])
+    purchased = FuzzyChoice(choices=[True, False])
 
 
-class AccountFactory(factory.Factory):
-    """ Creates fake Accounts """
+class WishlistFactory(factory.Factory):
+    """ Creates fake Wishlists """
 
     class Meta:
-        model = Account
+        model = Wishlist
 
     id = factory.Sequence(lambda n: n)
     name = factory.Faker("name")
-    email = factory.Faker("email")
-    phone_number = factory.Faker("phone_number")
-    date_joined = factory.LazyFunction(datetime.utcnow)
+    user_id = factory.Faker(lambda n: n)
+    # created_date = factory.LazyFunction(datetime.utcnow)

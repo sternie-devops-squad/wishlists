@@ -46,7 +46,7 @@ if __name__ != "__main__":
     app.logger.info("Logging handler established")
 
 app.logger.info(70 * "*")
-app.logger.info("  A C C O U N T   S E R V I C E   R U N N I N G  ".center(70, "*"))
+app.logger.info("  W I S H L I S T  S E R V I C E   R U N N I N G  ".center(70, "*"))
 app.logger.info(70 * "*")
 
 try:

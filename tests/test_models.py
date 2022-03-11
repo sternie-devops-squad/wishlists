@@ -1,23 +1,23 @@
 """
-Test cases for Account Model
+Test cases for Wishlist Model
 
 """
 import logging
 import unittest
 import os
 from service import app
-from service.models import Account, Address, DataValidationError, db
-from tests.factories import AccountFactory, AddressFactory
+from service.models import Wishlist, Item, DataValidationError, db
+from tests.factories import WishlistFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
 )
 
 ######################################################################
-#  Account   M O D E L   T E S T   C A S E S
+#  Wishlist   M O D E L   T E S T   C A S E S
 ######################################################################
-class TestAccount(unittest.TestCase):
-    """ Test Cases for Account Model """
+class TestWishlist(unittest.TestCase):
+    """ Test Cases for Wishlist Model """
 
     @classmethod
     def setUpClass(cls):
@@ -26,7 +26,7 @@ class TestAccount(unittest.TestCase):
         app.config['DEBUG'] = False
         app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
-        Account.init_db(app)
+        Wishlist.init_db(app)
 
     @classmethod
     def tearDownClass(cls):
@@ -47,254 +47,248 @@ class TestAccount(unittest.TestCase):
 #  H E L P E R   M E T H O D S
 ######################################################################
 
-    def _create_account(self, addresses=[]):
-        """ Creates an account from a Factory """
-        fake_account = AccountFactory()
-        account = Account(
-            name=fake_account.name, 
-            email=fake_account.email, 
-            phone_number=fake_account.phone_number, 
-            date_joined=fake_account.date_joined,
-            addresses=addresses
+    def _create_wishlist(self, items=[]):
+        """ Creates an wishlist from a Factory """
+        fake_wishlist = WishlistFactory()
+        wishlist = Wishlist(
+            name=fake_wishlist.name, 
+            user_id=fake_wishlist.user_id, 
+            # created_date=fake_wishlist.created_date,
+            items=items
         )
-        self.assertTrue(account != None)
-        self.assertEqual(account.id, None)
-        return account
+        self.assertTrue(wishlist != None)
+        self.assertEqual(wishlist.id, None)
+        return wishlist
 
-    def _create_address(self):
-        """ Creates fake addresses from factory """
-        fake_address = AddressFactory()
-        address = Address(
-            name=fake_address.name,
-            street=fake_address.street,
-            city=fake_address.city,
-            state=fake_address.state,
-            postalcode=fake_address.postalcode
+    def _create_item(self):
+        """ Creates fake items from factory """
+        fake_item = ItemFactory()
+        item = Item(
+            name=fake_item.name,
+            category=fake_item.category,
+            price=fake_item.price,
+            in_stock=fake_item.in_stock,
+            purchased=fake_item.purchased
         )
-        self.assertTrue(address != None)
-        self.assertEqual(address.id, None)
-        return address
+        self.assertTrue(item != None)
+        self.assertEqual(item.id, None)
+        return item
 
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
 
-    def test_create_an_account(self):
-        """ Create a Account and assert that it exists """
-        fake_account = AccountFactory()
-        account = Account(
-            name=fake_account.name, 
-            email=fake_account.email, 
-            phone_number=fake_account.phone_number, 
-            date_joined=fake_account.date_joined 
+    def test_create_an_wishlist(self):
+        """ Create a Wishlist and assert that it exists """
+        fake_wishlist = WishlistFactory()
+        wishlist = Wishlist(
+            name=fake_wishlist.name, 
+            user_id=fake_wishlist.user_id, 
+            # created_date=fake_wishlist.created_date 
         )
-        self.assertTrue(account != None)
-        self.assertEqual(account.id, None)
-        self.assertEqual(account.name, fake_account.name)
-        self.assertEqual(account.email, fake_account.email)
-        self.assertEqual(account.phone_number, fake_account.phone_number)
-        self.assertEqual(account.date_joined, fake_account.date_joined)
+        self.assertTrue(wishlist != None)
+        self.assertEqual(wishlist.id, None)
+        self.assertEqual(wishlist.name, fake_wishlist.name)
+        self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
+        # self.assertEqual(wishlist.created_date, fake_wishlist.created_date)
 
-    def test_add_a_account(self):
-        """ Create an account and add it to the database """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
-        account = self._create_account()
-        account.create()
+    def test_add_a_wishlist(self):
+        """ Create an wishlist and add it to the database """
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+        wishlist = self._create_wishlist()
+        wishlist.create()
         # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 1)
+        self.assertEqual(wishlist.id, 1)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
 
-    def test_read_account(self):
-        """ Read an account """
-        account = self._create_account()
-        account.create()
+    # def test_read_wishlist(self):
+    #     """ Read an wishlist """
+    #     wishlist = self._create_wishlist()
+    #     wishlist.create()
 
-        # Read it back
-        found_account = Account.find(account.id)
-        self.assertEqual(found_account.id, account.id)
-        self.assertEqual(found_account.name, account.name)
-        self.assertEqual(found_account.email, account.email)
-        self.assertEqual(found_account.phone_number, account.phone_number)
-        self.assertEqual(found_account.date_joined, account.date_joined)
+    #     # Read it back
+    #     found_wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(found_wishlist.id, wishlist.id)
+    #     self.assertEqual(found_wishlist.name, wishlist.name)
+    #     self.assertEqual(found_wishlist.user_id, wishlist.user_id)
+    #     # self.assertEqual(found_wishlist.created_date, wishlist.created_date)
 
-    def test_update_account(self):
-        """ Update an account """
-        account = self._create_account()
-        account.create()
-        # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
+    # def test_update_wishlist(self):
+    #     """ Update an wishlist """
+    #     wishlist = self._create_wishlist()
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertEqual(wishlist.id, 1)
 
-        # Fetch it back
-        account = Account.find(account.id)
-        account.email = "XYZZY@plugh.com"
-        account.update()
+    #     # Fetch it back
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     wishlist.user_id = "XYZZY@plugh.com"
+    #     wishlist.update()
 
-        # Fetch it back again
-        account = Account.find(account.id)
-        self.assertEqual(account.email, "XYZZY@plugh.com")
+    #     # Fetch it back again
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(wishlist.user_id, "XYZZY@plugh.com")
 
 
-    def test_delete_an_account(self):
-        """ Delete an account from the database """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
-        account = self._create_account()
-        account.create()
-        # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 1)
-        account = accounts[0]
-        account.delete()
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 0)
+    # def test_delete_an_wishlist(self):
+    #     """ Delete an wishlist from the database """
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
+    #     wishlist = self._create_wishlist()
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertEqual(wishlist.id, 1)
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 1)
+    #     wishlist = wishlists[0]
+    #     wishlist.delete()
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 0)
 
-    def test_list_all_accounts(self):
-        """ List all Accounts in the database """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
-        for _ in range(5):
-            account = self._create_account()
-            account.create()
-        # Assert that there are not 5 accounts in the database
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 5)
+    # def test_list_all_wishlists(self):
+    #     """ List all Wishlists in the database """
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
+    #     for _ in range(5):
+    #         wishlist = self._create_wishlist()
+    #         wishlist.create()
+    #     # Assert that there are not 5 wishlists in the database
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 5)
 
-    def test_find_by_name(self):
-        """ Find by name """
-        account = self._create_account()
-        account.create()
+    # def test_find_by_name(self):
+    #     """ Find by name """
+    #     wishlist = self._create_wishlist()
+    #     wishlist.create()
 
-        # Fetch it back by name
-        same_account = Account.find_by_name(account.name)[0]
-        self.assertEqual(same_account.id, account.id)
-        self.assertEqual(same_account.name, account.name)
+    #     # Fetch it back by name
+    #     same_wishlist = Wishlist.find_by_name(wishlist.name)[0]
+    #     self.assertEqual(same_wishlist.id, wishlist.id)
+    #     self.assertEqual(same_wishlist.name, wishlist.name)
 
-    def test_serialize_an_account(self):
-        """ Serialize an account """
-        address = self._create_address()
-        account = self._create_account(addresses=[address])
-        serial_account = account.serialize()
-        self.assertEqual(serial_account['id'], account.id)
-        self.assertEqual(serial_account['name'], account.name)
-        self.assertEqual(serial_account['email'], account.email)
-        self.assertEqual(serial_account['phone_number'], account.phone_number)
-        self.assertEqual(serial_account['date_joined'], str(account.date_joined))
-        self.assertEqual(len(serial_account['addresses']), 1)
-        addresses = serial_account['addresses']
-        self.assertEqual(addresses[0]['id'], address.id)
-        self.assertEqual(addresses[0]['account_id'], address.account_id)
-        self.assertEqual(addresses[0]['name'], address.name)
-        self.assertEqual(addresses[0]['street'], address.street)
-        self.assertEqual(addresses[0]['city'], address.city)
-        self.assertEqual(addresses[0]['state'], address.state)
-        self.assertEqual(addresses[0]['postalcode'], address.postalcode)
+    def test_serialize_an_wishlist(self):
+        """ Serialize an wishlist """
+        item = self._create_item()
+        wishlist = self._create_wishlist(items=[item])
+        serial_wishlist = wishlist.serialize()
+        self.assertEqual(serial_wishlist['id'], wishlist.id)
+        self.assertEqual(serial_wishlist['name'], wishlist.name)
+        self.assertEqual(serial_wishlist['user_id'], wishlist.user_id)
+        # self.assertEqual(serial_wishlist['created_date'], str(wishlist.created_date))
+        self.assertEqual(len(serial_wishlist['items']), 1)
+        items = serial_wishlist['items']
+        self.assertEqual(items[0]['id'], item.id)
+        self.assertEqual(items[0]['wishlist_id'], item.wishlist_id)
+        self.assertEqual(items[0]['name'], item.name)
+        self.assertEqual(items[0]['category'], item.category)
+        self.assertEqual(items[0]['price'], item.price)
+        self.assertEqual(items[0]['in_stock'], item.in_stock)
+        self.assertEqual(items[0]['purchased'], item.purchased)
 
-    def test_deserialize_an_account(self):
-        """ Deserialize an account """
-        address = self._create_address()
-        account = self._create_account(addresses=[address])
-        serial_account = account.serialize()
-        new_account = Account()
-        new_account.deserialize(serial_account)
-        self.assertEqual(new_account.id, account.id)
-        self.assertEqual(new_account.name, account.name)
-        self.assertEqual(new_account.email, account.email)
-        self.assertEqual(new_account.phone_number, account.phone_number)
-        self.assertEqual(new_account.date_joined, account.date_joined)
+    def test_deserialize_an_wishlist(self):
+        """ Deserialize an wishlist """
+        item = self._create_item()
+        wishlist = self._create_wishlist(items=[item])
+        serial_wishlist = wishlist.serialize()
+        new_wishlist = Wishlist()
+        new_wishlist.deserialize(serial_wishlist)
+        self.assertEqual(new_wishlist.id, wishlist.id)
+        self.assertEqual(new_wishlist.name, wishlist.name)
+        self.assertEqual(new_wishlist.user_id, wishlist.user_id)
+        # self.assertEqual(new_wishlist.created_date, wishlist.created_date)
 
     def test_deserialize_with_key_error(self):
-        """ Deserialize an account with a KeyError """
-        account = Account()
-        self.assertRaises(DataValidationError, account.deserialize, {})
+        """ Deserialize an wishlist with a KeyError """
+        wishlist = Wishlist()
+        self.assertRaises(DataValidationError, wishlist.deserialize, {})
 
     def test_deserialize_with_type_error(self):
-        """ Deserialize an account with a TypeError """
-        account = Account()
-        self.assertRaises(DataValidationError, account.deserialize, [])
+        """ Deserialize an wishlist with a TypeError """
+        wishlist = Wishlist()
+        self.assertRaises(DataValidationError, wishlist.deserialize, [])
 
-    def test_deserialize_address_key_error(self):
-        """ Deserialize an address with a KeyError """
-        address = Address()
-        self.assertRaises(DataValidationError, address.deserialize, {})
+    def test_deserialize_item_key_error(self):
+        """ Deserialize an item with a KeyError """
+        item = Item()
+        self.assertRaises(DataValidationError, item.deserialize, {})
 
-    def test_deserialize_address_type_error(self):
-        """ Deserialize an address with a TypeError """
-        address = Address()
-        self.assertRaises(DataValidationError, address.deserialize, [])
+    def test_deserialize_item_type_error(self):
+        """ Deserialize an item with a TypeError """
+        item = Item()
+        self.assertRaises(DataValidationError, item.deserialize, [])
 
-    def test_add_account_address(self):
-        """ Create an account with an address and add it to the database """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
-        account = self._create_account()
-        address = self._create_address()
-        account.addresses.append(address)
-        account.create()
-        # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 1)
+    # def test_add_wishlist_item(self):
+    #     """ Create an wishlist with an item and add it to the database """
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
+    #     wishlist = self._create_wishlist()
+    #     item = self._create_item()
+    #     wishlist.items.append(item)
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertEqual(wishlist.id, 1)
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 1)
 
-        new_account = Account.find(account.id)
-        self.assertEqual(account.addresses[0].name, address.name)
+    #     new_wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(wishlist.items[0].name, item.name)
 
-        address2 = self._create_address()
-        account.addresses.append(address2)
-        account.update()
+    #     item2 = self._create_item()
+    #     wishlist.items.append(item2)
+    #     wishlist.update()
 
-        new_account = Account.find(account.id)
-        self.assertEqual(len(account.addresses), 2)
-        self.assertEqual(account.addresses[1].name, address2.name)
+    #     new_wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(len(wishlist.items), 2)
+    #     self.assertEqual(wishlist.items[1].name, item2.name)
 
-    def test_update_account_address(self):
-        """ Update an accounts address """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
+    # def test_update_wishlist_item(self):
+    #     """ Update an wishlists item """
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
 
-        address = self._create_address()
-        account = self._create_account(addresses=[address])
-        account.create()
-        # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 1)
+    #     item = self._create_item()
+    #     wishlist = self._create_wishlist(items=[item])
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertEqual(wishlist.id, 1)
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 1)
 
-        # Fetch it back
-        account = Account.find(account.id)
-        old_address = account.addresses[0]
-        self.assertEqual(old_address.city, address.city)
+    #     # Fetch it back
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     old_item = wishlist.items[0]
+    #     self.assertEqual(old_item.price, item.price)
 
-        old_address.city = "XX"
-        account.update()
+    #     old_item.price = "XX" #REVIEW THIS | BREAKAGE MAY OCCUR HERE
+    #     wishlist.update()
 
-        # Fetch it back again
-        account = Account.find(account.id)
-        address = account.addresses[0]
-        self.assertEqual(address.city, "XX")
+    #     # Fetch it back again
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     item = wishlist.items[0]
+    #     self.assertEqual(item.price, "XX")
 
-    def test_delete_account_address(self):
-        """ Delete an accounts address """
-        accounts = Account.all()
-        self.assertEqual(accounts, [])
+    # def test_delete_wishlist_item(self):
+    #     """ Delete an wishlists item """
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(wishlists, [])
 
-        address = self._create_address()
-        account = self._create_account(addresses=[address])
-        account.create()
-        # Assert that it was assigned an id and shows up in the database
-        self.assertEqual(account.id, 1)
-        accounts = Account.all()
-        self.assertEqual(len(accounts), 1)
+    #     item = self._create_item()
+    #     wishlist = self._create_wishlist(items=[item])
+    #     wishlist.create()
+    #     # Assert that it was assigned an id and shows up in the database
+    #     self.assertEqual(wishlist.id, 1)
+    #     wishlists = Wishlist.all()
+    #     self.assertEqual(len(wishlists), 1)
 
-        # Fetch it back
-        account = Account.find(account.id)
-        address = account.addresses[0]
-        address.delete()
-        account.update()
+    #     # Fetch it back
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     item = wishlist.items[0]
+    #     item.delete()
+    #     wishlist.update()
 
-        # Fetch it back again
-        account = Account.find(account.id)
-        self.assertEqual(len(account.addresses), 0)
+    #     # Fetch it back again
+    #     wishlist = Wishlist.find(wishlist.id)
+    #     self.assertEqual(len(wishlist.items), 0)
 
