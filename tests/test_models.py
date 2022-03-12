@@ -14,7 +14,7 @@ DATABASE_URI = os.getenv(
 )
 
 ######################################################################
-#  Wishlist   M O D E L   T E S T   C A S E S
+#  W I S H L I S T   M O D E L   T E S T   C A S E S
 ######################################################################
 class TestWishlist(unittest.TestCase):
     """ Test Cases for Wishlist Model """
@@ -53,7 +53,7 @@ class TestWishlist(unittest.TestCase):
         wishlist = Wishlist(
             name=fake_wishlist.name, 
             user_id=fake_wishlist.user_id, 
-            # created_date=fake_wishlist.created_date,
+            created_date=fake_wishlist.created_date,
             items=items
         )
         self.assertTrue(wishlist != None)
@@ -84,13 +84,13 @@ class TestWishlist(unittest.TestCase):
         wishlist = Wishlist(
             name=fake_wishlist.name, 
             user_id=fake_wishlist.user_id, 
-            # created_date=fake_wishlist.created_date 
+            created_date=fake_wishlist.created_date 
         )
         self.assertTrue(wishlist != None)
         self.assertEqual(wishlist.id, None)
         self.assertEqual(wishlist.name, fake_wishlist.name)
         self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
-        # self.assertEqual(wishlist.created_date, fake_wishlist.created_date)
+        self.assertEqual(wishlist.created_date, fake_wishlist.created_date)
 
     def test_add_a_wishlist(self):
         """ Create an wishlist and add it to the database """
@@ -103,70 +103,17 @@ class TestWishlist(unittest.TestCase):
         wishlists = Wishlist.all()
         self.assertEqual(len(wishlists), 1)
 
-    # def test_read_wishlist(self):
-    #     """ Read an wishlist """
-    #     wishlist = self._create_wishlist()
-    #     wishlist.create()
+    def test_list_all_wishlists(self):
+        """ List all Wishlists in the database """
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+        for _ in range(5):
+            wishlist = self._create_wishlist()
+            wishlist.create()
+        # Assert that there are not 5 wishlists in the database
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 5)
 
-    #     # Read it back
-    #     found_wishlist = Wishlist.find(wishlist.id)
-    #     self.assertEqual(found_wishlist.id, wishlist.id)
-    #     self.assertEqual(found_wishlist.name, wishlist.name)
-    #     self.assertEqual(found_wishlist.user_id, wishlist.user_id)
-    #     # self.assertEqual(found_wishlist.created_date, wishlist.created_date)
-
-    # def test_update_wishlist(self):
-    #     """ Update an wishlist """
-    #     wishlist = self._create_wishlist()
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertEqual(wishlist.id, 1)
-
-    #     # Fetch it back
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     wishlist.user_id = "XYZZY@plugh.com"
-    #     wishlist.update()
-
-    #     # Fetch it back again
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     self.assertEqual(wishlist.user_id, "XYZZY@plugh.com")
-
-
-    # def test_delete_an_wishlist(self):
-    #     """ Delete an wishlist from the database """
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
-    #     wishlist = self._create_wishlist()
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertEqual(wishlist.id, 1)
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 1)
-    #     wishlist = wishlists[0]
-    #     wishlist.delete()
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 0)
-
-    # def test_list_all_wishlists(self):
-    #     """ List all Wishlists in the database """
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
-    #     for _ in range(5):
-    #         wishlist = self._create_wishlist()
-    #         wishlist.create()
-    #     # Assert that there are not 5 wishlists in the database
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 5)
-
-    # def test_find_by_name(self):
-    #     """ Find by name """
-    #     wishlist = self._create_wishlist()
-    #     wishlist.create()
-
-    #     # Fetch it back by name
-    #     same_wishlist = Wishlist.find_by_name(wishlist.name)[0]
-    #     self.assertEqual(same_wishlist.id, wishlist.id)
-    #     self.assertEqual(same_wishlist.name, wishlist.name)
 
     def test_serialize_an_wishlist(self):
         """ Serialize an wishlist """
@@ -176,7 +123,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(serial_wishlist['id'], wishlist.id)
         self.assertEqual(serial_wishlist['name'], wishlist.name)
         self.assertEqual(serial_wishlist['user_id'], wishlist.user_id)
-        # self.assertEqual(serial_wishlist['created_date'], str(wishlist.created_date))
+        self.assertEqual(serial_wishlist['created_date'], str(wishlist.created_date))
         self.assertEqual(len(serial_wishlist['items']), 1)
         items = serial_wishlist['items']
         self.assertEqual(items[0]['id'], item.id)
@@ -197,7 +144,7 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(new_wishlist.id, wishlist.id)
         self.assertEqual(new_wishlist.name, wishlist.name)
         self.assertEqual(new_wishlist.user_id, wishlist.user_id)
-        # self.assertEqual(new_wishlist.created_date, wishlist.created_date)
+        self.assertEqual(new_wishlist.created_date, wishlist.created_date)
 
     def test_deserialize_with_key_error(self):
         """ Deserialize an wishlist with a KeyError """
@@ -218,77 +165,3 @@ class TestWishlist(unittest.TestCase):
         """ Deserialize an item with a TypeError """
         item = Item()
         self.assertRaises(DataValidationError, item.deserialize, [])
-
-    # def test_add_wishlist_item(self):
-    #     """ Create an wishlist with an item and add it to the database """
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
-    #     wishlist = self._create_wishlist()
-    #     item = self._create_item()
-    #     wishlist.items.append(item)
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertEqual(wishlist.id, 1)
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 1)
-
-    #     new_wishlist = Wishlist.find(wishlist.id)
-    #     self.assertEqual(wishlist.items[0].name, item.name)
-
-    #     item2 = self._create_item()
-    #     wishlist.items.append(item2)
-    #     wishlist.update()
-
-    #     new_wishlist = Wishlist.find(wishlist.id)
-    #     self.assertEqual(len(wishlist.items), 2)
-    #     self.assertEqual(wishlist.items[1].name, item2.name)
-
-    # def test_update_wishlist_item(self):
-    #     """ Update an wishlists item """
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
-
-    #     item = self._create_item()
-    #     wishlist = self._create_wishlist(items=[item])
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertEqual(wishlist.id, 1)
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 1)
-
-    #     # Fetch it back
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     old_item = wishlist.items[0]
-    #     self.assertEqual(old_item.price, item.price)
-
-    #     old_item.price = "XX" #REVIEW THIS | BREAKAGE MAY OCCUR HERE
-    #     wishlist.update()
-
-    #     # Fetch it back again
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     item = wishlist.items[0]
-    #     self.assertEqual(item.price, "XX")
-
-    # def test_delete_wishlist_item(self):
-    #     """ Delete an wishlists item """
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(wishlists, [])
-
-    #     item = self._create_item()
-    #     wishlist = self._create_wishlist(items=[item])
-    #     wishlist.create()
-    #     # Assert that it was assigned an id and shows up in the database
-    #     self.assertEqual(wishlist.id, 1)
-    #     wishlists = Wishlist.all()
-    #     self.assertEqual(len(wishlists), 1)
-
-    #     # Fetch it back
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     item = wishlist.items[0]
-    #     item.delete()
-    #     wishlist.update()
-
-    #     # Fetch it back again
-    #     wishlist = Wishlist.find(wishlist.id)
-    #     self.assertEqual(len(wishlist.items), 0)
-

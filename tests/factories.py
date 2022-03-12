@@ -30,7 +30,7 @@ class ItemFactory(factory.Factory):
 #    wishlist_id = ???
     name = FuzzyChoice(choices=["book", "basketball", "other"])
     category = FuzzyChoice(choices=["home decor", "sports", "music", "apparel"])
-    price = factory.Faker([5,10,15,20,25,50,75,100])
+    price = FuzzyChoice(choices=[5,10,15,20,25,50,75,100])
     in_stock = FuzzyChoice(choices=[True, False])
     purchased = FuzzyChoice(choices=[True, False])
 
@@ -42,6 +42,6 @@ class WishlistFactory(factory.Factory):
         model = Wishlist
 
     id = factory.Sequence(lambda n: n)
-    name = factory.Faker("name")
-    user_id = factory.Faker(lambda n: n)
-    # created_date = factory.LazyFunction(datetime.utcnow)
+    name = FuzzyChoice(choices=["personal", "gifts", "home improvement"])
+    user_id = FuzzyChoice(choices=[1, 2])
+    created_date = factory.LazyFunction(datetime.utcnow)

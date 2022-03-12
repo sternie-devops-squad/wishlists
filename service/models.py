@@ -141,8 +141,8 @@ class Wishlist(db.Model, PersistentBase):
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
-    user_id = db = db.Column(db.String(32), nullable=True)
-    # created_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    user_id = db.Column(db.Integer)
+    created_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     items = db.relationship('Item', backref='wishlist', lazy=True)  
 
     def __repr__(self):
@@ -154,7 +154,7 @@ class Wishlist(db.Model, PersistentBase):
             "id": self.id,
             "name": self.name,
             "user_id": self.user_id,
-            # "created_date": self.created_date.strftime(DATETIME_FORMAT),
+            "created_date": self.created_date.strftime(DATETIME_FORMAT),
             "items": []
         }
         for item in self.items:
@@ -171,7 +171,7 @@ class Wishlist(db.Model, PersistentBase):
         try:
             self.name = data["name"]
             self.user_id = data["user_id"]
-            # self.created_date = datetime.strptime(data["created_date"], DATETIME_FORMAT)
+            self.created_date = datetime.strptime(data["created_date"], DATETIME_FORMAT)
             # handle inner list of items
             item_list = data.get("items")
             for json_item in item_list:
