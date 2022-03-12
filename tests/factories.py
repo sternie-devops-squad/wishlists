@@ -16,20 +16,32 @@
 Test Factory to make fake objects for testing
 """
 import factory
+from datetime import datetime
 from factory.fuzzy import FuzzyChoice
-from service.models import Pet, Gender
+from service.models import Wishlist, Item
 
+class ItemFactory(factory.Factory):
+    """ Creates fake Items """
 
-class PetFactory(factory.Factory):
-    """Creates fake pets that you don't have to feed"""
-
-    class Meta:  # pylint: disable=too-few-public-methods
-        """Maps factory to data model"""
-
-        model = Pet
+    class Meta:
+        model = Item
 
     id = factory.Sequence(lambda n: n)
-    name = factory.Faker("first_name")
-    category = FuzzyChoice(choices=["dog", "cat", "bird", "fish"])
-    available = FuzzyChoice(choices=[True, False])
-    gender = FuzzyChoice(choices=[Gender.MALE, Gender.FEMALE, Gender.UNKNOWN])
+#    wishlist_id = ???
+    name = FuzzyChoice(choices=["book", "basketball", "other"])
+    category = FuzzyChoice(choices=["home decor", "sports", "music", "apparel"])
+    price = FuzzyChoice(choices=[5,10,15,20,25,50,75,100])
+    in_stock = FuzzyChoice(choices=[True, False])
+    purchased = FuzzyChoice(choices=[True, False])
+
+
+class WishlistFactory(factory.Factory):
+    """ Creates fake Wishlists """
+
+    class Meta:
+        model = Wishlist
+
+    id = factory.Sequence(lambda n: n)
+    name = FuzzyChoice(choices=["personal", "gifts", "home improvement"])
+    user_id = FuzzyChoice(choices=[1, 2])
+    created_date = factory.LazyFunction(datetime.utcnow)

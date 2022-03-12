@@ -1,5 +1,5 @@
 """
-TestYourResourceModel API Service Test Suite
+<your resource name> API Service Test Suite
 
 Test cases can be run with the following:
   nosetests -v --with-spec --spec-color
@@ -9,39 +9,123 @@ import os
 import logging
 from unittest import TestCase
 from unittest.mock import MagicMock, patch
+from tests.factories import WishlistFactory, ItemFactory
 from service import status  # HTTP Status Codes
 from service.models import db
 from service.routes import app, init_db
 
+DATABASE_URI = os.getenv(
+    "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
+)
+
+BASE_URL = "/wishlists"
+
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
-class TestYourResourceServer(TestCase):
-    """ REST API Server Tests """
+class TestWishlistService(TestCase):
+    """ Wishlist Service Tests """
 
     @classmethod
     def setUpClass(cls):
-        """ This runs once before the entire test suite """
-        pass
+        """ Run once before all tests """
+        app.config['TESTING'] = True
+        app.config['DEBUG'] = False
+        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
+        app.logger.setLevel(logging.CRITICAL)
+        init_db()
 
     @classmethod
     def tearDownClass(cls):
-        """ This runs once after the entire test suite """
+        """ Runs once before test suite """
         pass
 
     def setUp(self):
-        """ This runs before each test """
+        """ Runs before each test """
+        db.drop_all()  # clean up the last tests
+        db.create_all()  # create new tables
         self.app = app.test_client()
 
     def tearDown(self):
-        """ This runs after each test """
-        pass
+        """ Runs once after each test case """
+        db.session.remove()
+        db.drop_all()
 
-    ######################################################################
-    #  P L A C E   T E S T   C A S E S   H E R E
-    ######################################################################
+######################################################################
+#  H E L P E R   M E T H O D S
+######################################################################
+
+    def _create_wishlists(self, count):
+        """ Factory method to create wishlists in bulk """
+        wishlists = []
+        for _ in range(count):
+            wishlist = WishlistFactory()
+            resp = self.app.post(
+                BASE_URL, json=wishlist.serialize(), content_type="application/json"
+            )
+            self.assertEqual(
+                resp.status_code, status.HTTP_201_CREATED, "Could not create test Wishlist"
+            )
+            new_wishlist = resp.get_json()
+            wishlist.id = new_wishlist["id"]
+            wishlists.append(wishlist)
+        return wishlists
+
+######################################################################
+#  W I S H L I S T   T E S T   C A S E S
+######################################################################
 
     def test_index(self):
         """ Test index call """
         resp = self.app.get("/")
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+    def test_get_wishlist_list(self):
+        """ Get a list of Wishlists """
+        self._create_wishlists(5)
+        resp = self.app.get(BASE_URL)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(len(data), 5)
+
+    def test_get_wishlist(self):
+        """ Get a single Wishlist """
+        # get the id of an wishlist
+        wishlist = self._create_wishlists(1)[0]
+        resp = self.app.get(
+            f"{BASE_URL}/{wishlist.id}", 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        data = resp.get_json()
+        self.assertEqual(data["name"], wishlist.name)
+
+    def test_create_wishlist(self):
+        """ Create a new Wishlist """
+        wishlist = WishlistFactory()
+        resp = self.app.post(
+            BASE_URL, 
+            json=wishlist.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        
+        # Make sure location header is set
+        location = resp.headers.get("Location", None)
+        self.assertIsNotNone(location)
+        
+        # Check the data is correct
+        new_wishlist = resp.get_json()
+        self.assertEqual(new_wishlist["name"], wishlist.name, "Names does not match")
+        self.assertEqual(new_wishlist["items"], wishlist.items, "Item does not match")
+        self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
+        self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")
+
+        # Check that the location header was correct by getting it
+        resp = self.app.get(location, content_type="application/json")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        new_wishlist = resp.get_json()
+        self.assertEqual(new_wishlist["name"], wishlist.name, "Names does not match")
+        self.assertEqual(new_wishlist["items"], wishlist.items, "Item does not match")
+        self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
+        self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")
