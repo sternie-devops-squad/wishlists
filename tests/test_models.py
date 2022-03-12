@@ -5,13 +5,15 @@ Test cases for Wishlist Model
 import logging
 import unittest
 import os
-from service import app
+from service import app, status
 from service.models import Wishlist, Item, DataValidationError, db
 from tests.factories import WishlistFactory, ItemFactory
 
 DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgresql://postgres:postgres@localhost:5432/postgres"
 )
+
+BASE_URL = "/wishlists"
 
 ######################################################################
 #  W I S H L I S T   M O D E L   T E S T   C A S E S
@@ -114,7 +116,18 @@ class TestWishlist(unittest.TestCase):
         wishlists = Wishlist.all()
         self.assertEqual(len(wishlists), 5)
 
+    def test_read_a_wishlist(self):
+        """ Read a wishlist """
+        wishlist = self._create_wishlist()
+        wishlist.create()
 
+        # Read it back
+        found_wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(found_wishlist.id, wishlist.id)
+        self.assertEqual(found_wishlist.name, wishlist.name)
+        self.assertEqual(found_wishlist.user_id, wishlist.user_id)
+        self.assertEqual(found_wishlist.created_date, wishlist.created_date)
+        
     def test_serialize_an_wishlist(self):
         """ Serialize an wishlist """
         item = self._create_item()
