@@ -100,6 +100,11 @@ class TestWishlistService(TestCase):
         data = resp.get_json()
         self.assertEqual(data["name"], wishlist.name)
 
+    def test_get_wishlist_not_found(self):
+        """Get a Wishlist that is not found"""
+        resp = self.app.get(f"{BASE_URL}/0")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
     def test_create_wishlist(self):
         """ Create a new Wishlist """
         wishlist = WishlistFactory()
@@ -129,3 +134,33 @@ class TestWishlistService(TestCase):
         self.assertEqual(new_wishlist["items"], wishlist.items, "Item does not match")
         self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
         self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")
+    
+    # Error handler testing code below based on the Service_Accounts code example
+    def test_bad_request(self):
+        """ Send wrong media type """
+        wishlist = WishlistFactory()
+        resp = self.app.post(
+            BASE_URL, 
+            json={"name": "not enough data"}, 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_unsupported_media_type(self):
+        """ Send wrong media type """
+        wishlist = WishlistFactory()
+        resp = self.app.post(
+            BASE_URL, 
+            json=wishlist.serialize(), 
+            content_type="test/html"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+
+    def test_method_not_allowed(self):
+        """ Make an illegal method call """
+        resp = self.app.put(
+            BASE_URL, 
+            json={"not": "today"}, 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
