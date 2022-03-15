@@ -21,6 +21,7 @@ import os
 import sys
 import logging
 from flask import jsonify, request, url_for, make_response, abort
+from werkzeug.exceptions import NotFound
 from service.models import Wishlist, Item, DataValidationError
 from . import status  # HTTP Status Codes
 from . import app  # Import Flask application
@@ -96,6 +97,29 @@ def create_wishlists():
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
+
+######################################################################
+# UPDATE (EDIT) AN EXISTING WISHLIST
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>", methods=["PUT"])
+def update_wishlist(wishlist_id):
+    """
+    Update a wishlist
+
+    This endpoint will update a wishlist based the body that is posted
+    """
+    app.logger.info("Request to update wishlist with id: %s", wishlist_id)
+    check_content_type("application/json")
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        raise NotFound("Wishlist with id '{}' was not found.".format(wishlist_id))
+    wishlist.deserialize(request.get_json())
+    wishlist.id = wishlist_id
+    wishlist.update()
+
+    app.logger.info("Wishlist with ID [%s] updated.", wishlist.id)
+    return make_response(jsonify(wishlist.serialize()), status.HTTP_200_OK)
+
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S

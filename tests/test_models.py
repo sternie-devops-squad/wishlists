@@ -127,7 +127,23 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(found_wishlist.name, wishlist.name)
         self.assertEqual(found_wishlist.user_id, wishlist.user_id)
         self.assertEqual(found_wishlist.created_date, wishlist.created_date)
-        
+    
+    def test_update_a_wishlist(self):
+        """ Update (Edit) a wishlist """
+        wishlist = self._create_wishlist()
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertEqual(wishlist.id, 1)
+
+        # Fetch it back
+        wishlist = Wishlist.find(wishlist.id)
+        wishlist.name = "pets"
+        wishlist.update()
+
+        # Fetch it back again
+        wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(wishlist.name, "pets")
+    
     def test_serialize_an_wishlist(self):
         """ Serialize an wishlist """
         item = self._create_item()
