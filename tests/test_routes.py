@@ -135,6 +135,40 @@ class TestWishlistService(TestCase):
         self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
         self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")
     
+    def test_update_wishlist(self):
+        """ Update (Edit) an existing Wishlist """
+        # create a wishlist to update
+        test_wishlist = WishlistFactory()
+        resp = self.app.post(
+            BASE_URL, 
+            json=test_wishlist.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # update the wishlist
+        new_wishlist = resp.get_json()
+        new_wishlist["name"] = "Pets"
+        new_wishlist_id = new_wishlist["id"]
+        resp = self.app.put(
+            f"{BASE_URL}/{new_wishlist_id}",
+            json=new_wishlist,
+            content_type="application/json",
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        updated_wishlist = resp.get_json()
+        self.assertEqual(updated_wishlist["name"], "Pets")
+    
+    def test_update_wishlist_not_found(self):
+        """Update a Wishlist that does not exist"""
+        new_wishlist = WishlistFactory()
+        resp = self.app.put(
+            f"{BASE_URL}/0",
+            json=new_wishlist.serialize(),
+            content_type="application/json"
+         )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
     # Error handler testing code below based on the Service_Accounts code example
     def test_bad_request(self):
         """ Send wrong media type """
