@@ -198,3 +198,58 @@ class TestWishlistService(TestCase):
             content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+######################################################################
+#  I T E M  T E S T   C A S E S
+######################################################################
+
+    def test_get_item_list(self):
+        """ Get a list of Items """
+        # add two items to wishlist
+        wishlist = self._create_wishlists(1)[0]
+        item_list = ItemFactory.create_batch(2)
+
+        # Create item 1
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items", 
+            json=item_list[0].serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # Create item 2
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items",
+            json=item_list[1].serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        # get the list back and make sure there are 2
+        resp = self.app.get(
+            f"{BASE_URL}/{wishlist.id}/items", 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        data = resp.get_json()
+        self.assertEqual(len(data), 2)
+
+    def test_add_item(self):
+        """ Add an item to a wishlist """
+        wishlist = self._create_wishlists(1)[0]
+        item = ItemFactory()
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items",
+            json=item.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        logging.debug(data)
+        self.assertEqual(data["wishlist_id"], wishlist.id)
+        self.assertEqual(data["name"], item.name)
+        self.assertEqual(data["category"], item.category)
+        self.assertEqual(data["price"], item.price)
+        self.assertEqual(data["in_stock"], item.in_stock)
+        self.assertEqual(data["purchased"], item.purchased)
