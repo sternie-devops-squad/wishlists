@@ -121,6 +121,49 @@ def update_wishlist(wishlist_id):
     return make_response(jsonify(wishlist.serialize()), status.HTTP_200_OK)
 
 
+#---------------------------------------------------------------------
+#                I T E M   M E T H O D S
+#---------------------------------------------------------------------
+
+######################################################################
+# LIST ITEMS
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items", methods=["GET"])
+def list_items(wishlist_id):
+    """ Returns all of the Itemes for an Wishlist """
+    app.logger.info("Request for all Itemes for Wishlist with id: %s", wishlist_id)
+
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' could not be found.")
+
+    results = [item.serialize() for item in wishlist.items]
+    return make_response(jsonify(results), status.HTTP_200_OK)
+
+######################################################################
+# ADD AN ITEM TO A WISHLIST
+######################################################################
+@app.route('/wishlists/<int:wishlist_id>/items', methods=['POST'])
+def create_items(wishlist_id):
+    """
+    Create an Item on an Wishlist
+    This endpoint will add an item to an wishlist
+    """
+    app.logger.info("Request to create an Item for Wishlist with id: %s", wishlist_id)
+    check_content_type("application/json")
+
+    wishlist = Wishlist.find(wishlist_id)
+    if not wishlist:
+        abort(status.HTTP_404_NOT_FOUND, f"Wishlist with id '{wishlist_id}' could not be found.")
+
+    item = Item()
+    item.deserialize(request.get_json())
+    wishlist.items.append(item)
+    wishlist.update()
+    message = item.serialize()
+    return make_response(jsonify(message), status.HTTP_201_CREATED)
+
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################

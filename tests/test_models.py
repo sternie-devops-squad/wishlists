@@ -194,3 +194,27 @@ class TestWishlist(unittest.TestCase):
         """ Deserialize an item with a TypeError """
         item = Item()
         self.assertRaises(DataValidationError, item.deserialize, [])
+
+    def test_add_wishlist_item(self):
+        """ Create an wishlist with an item and add it to the database """
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+        wishlist = self._create_wishlist()
+        item = self._create_item()
+        wishlist.items.append(item)
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertEqual(wishlist.id, 1)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
+
+        new_wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(wishlist.items[0].name, item.name)
+
+        item2 = self._create_item()
+        wishlist.items.append(item2)
+        wishlist.update()
+
+        new_wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(len(wishlist.items), 2)
+        self.assertEqual(wishlist.items[1].name, item2.name)
