@@ -253,3 +253,31 @@ class TestWishlistService(TestCase):
         self.assertEqual(data["price"], item.price)
         self.assertEqual(data["in_stock"], item.in_stock)
         self.assertEqual(data["purchased"], item.purchased)
+
+    def test_delete_item(self):
+        """ Delete an Item """
+        wishlist = self._create_wishlists(1)[0]
+        item = ItemFactory()
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items",
+            json=item.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        data = resp.get_json()
+        logging.debug(data)
+        item_id = data["id"]
+
+        # send delete request
+        resp = self.app.delete(
+            f"{BASE_URL}/{wishlist.id}/items/{item_id}",
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+        # retrieve it back and make sure item is not there
+        resp = self.app.get(
+            f"{BASE_URL}/{wishlist.id}/items/{item_id}",
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)       
