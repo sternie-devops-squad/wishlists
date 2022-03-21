@@ -120,6 +120,20 @@ def update_wishlist(wishlist_id):
     app.logger.info("Wishlist with ID [%s] updated.", wishlist.id)
     return make_response(jsonify(wishlist.serialize()), status.HTTP_200_OK)
 
+######################################################################
+# DELETE AN WISHLIST
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>", methods=["DELETE"])
+def delete_accounts(wishlist_id):
+    """
+    Delete an Wishlist
+    This endpoint will delete an Wishlist based the id specified in the path
+    """
+    app.logger.info("Request to delete wishlist with id: %s", wishlist_id)
+    wishlist = Wishlist.find(wishlist_id)
+    if wishlist:
+        wishlist.delete()
+    return make_response("", status.HTTP_204_NO_CONTENT)
 
 #---------------------------------------------------------------------
 #                I T E M   M E T H O D S
