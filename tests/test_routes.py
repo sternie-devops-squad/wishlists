@@ -169,6 +169,16 @@ class TestWishlistService(TestCase):
          )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_delete_wishlist(self):
+        """ Delete a Wishlist """
+        # get the id of an wishlist
+        wishlist = self._create_wishlists(1)[0]
+        resp = self.app.delete(
+            f"{BASE_URL}/{wishlist.id}", 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
     # Error handler testing code below based on the Service_Accounts code example
     def test_bad_request(self):
         """ Send wrong media type """
