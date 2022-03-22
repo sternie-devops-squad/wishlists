@@ -235,11 +235,11 @@ class TestWishlist(unittest.TestCase):
         self.assertEqual(wishlist.items[1].name, item2.name)
 
     def test_update_wishlist_item(self):
-        """ Update an wishlist item """
+        """ Update a wishlist item """
         wishlists = Wishlist.all()
         self.assertEqual(wishlists, [])
 
-        item = self._create_items()
+        item = self._create_item()
         wishlist = self._create_wishlist(items=[item])
         wishlist.create()
         # Assert that it was assigned an id and shows up in the database
