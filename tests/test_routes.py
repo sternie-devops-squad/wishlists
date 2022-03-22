@@ -266,6 +266,7 @@ class TestWishlistService(TestCase):
 
     def test_get_item(self):
         """ Get an item from a wishlist """
+        #WIP: this test is failing please help
         # create a known item
         wishlist = self._create_wishlists(1)[0]
         item = ItemFactory()
@@ -298,6 +299,7 @@ class TestWishlistService(TestCase):
 
     def test_update_item(self):
         """ Update an item in a wishlist """
+        #WIP: this test is failing please help
         # create a known item
         wishlist = self._create_wishlists(1)[0]
         item = ItemFactory()
