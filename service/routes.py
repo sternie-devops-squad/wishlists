@@ -61,7 +61,7 @@ def list_wishlists():
 
 
 # ######################################################################
-# # RETRIEVE AN WISHLIST
+# # RETRIEVE A WISHLIST
 # ######################################################################
 @app.route("/wishlists/<int:wishlist_id>", methods=["GET"])
 def get_wishlists(wishlist_id):
@@ -178,7 +178,7 @@ def create_items(wishlist_id):
     return make_response(jsonify(message), status.HTTP_201_CREATED)
 
 ######################################################################
-# RETRIEVE AN Item FROM ACCOUNT
+# RETRIEVE AN ITEM FROM A WISHLIST
 ######################################################################
 @app.route('/wishlists/<int:wishlist_id>/items/<int:item_id>', methods=['GET'])
 def get_items(wishlist_id, item_id):
@@ -195,7 +195,7 @@ def get_items(wishlist_id, item_id):
     return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# UPDATE AN Item
+# UPDATE AN ITEM
 ######################################################################
 @app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["PUT"])
 def update_items(wishlist_id, item_id):
@@ -216,7 +216,7 @@ def update_items(wishlist_id, item_id):
     return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
-# DELETE AN Item
+# DELETE AN ITEM
 ######################################################################
 @app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>", methods=["DELETE"])
 def delete_items(wishlist_id, item_id):
