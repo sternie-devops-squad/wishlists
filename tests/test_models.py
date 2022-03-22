@@ -158,6 +158,16 @@ class TestWishlist(unittest.TestCase):
         wishlist.delete()
         wishlists = Wishlist.all()
         self.assertEqual(len(wishlists), 0)
+
+    def test_find_by_name(self):
+        """ Find by name """
+        wishlist = self._create_wishlist()
+        wishlist.create()
+
+        # Fetch it back by name
+        same_wishlist = Wishlist.find_by_name(wishlist.name)[0]
+        self.assertEqual(same_wishlist.id, wishlist.id)
+        self.assertEqual(same_wishlist.name, wishlist.name)
     
     def test_serialize_an_wishlist(self):
         """ Serialize an wishlist """
@@ -259,3 +269,26 @@ class TestWishlist(unittest.TestCase):
         wishlist = Wishlist.find(wishlist.id)
         item = wishlist.items[0]
         self.assertEqual(item.category, "XX")
+
+    def test_delete_wishlist_item(self):
+        """ Delete an wishlists item """
+        wishlists = Wishlist.all()
+        self.assertEqual(wishlists, [])
+
+        item = self._create_item()
+        wishlist = self._create_wishlist(items=[item])
+        wishlist.create()
+        # Assert that it was assigned an id and shows up in the database
+        self.assertEqual(wishlist.id, 1)
+        wishlists = Wishlist.all()
+        self.assertEqual(len(wishlists), 1)
+
+        # Fetch it back
+        wishlist = Wishlist.find(wishlist.id)
+        item = wishlist.items[0]
+        item.delete()
+        wishlist.update()
+
+        # Fetch it back again
+        wishlist = Wishlist.find(wishlist.id)
+        self.assertEqual(len(wishlist.items), 0)
