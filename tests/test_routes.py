@@ -133,6 +133,7 @@ class TestWishlistService(TestCase):
         # Check the data is correct
         new_wishlist = resp.get_json()
         self.assertEqual(new_wishlist["name"], wishlist.name, "Names does not match")
+        self.assertEqual(new_wishlist["type"], wishlist.type, "Type does not match")
         self.assertEqual(new_wishlist["items"], wishlist.items, "Item does not match")
         self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
         self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")
@@ -142,6 +143,7 @@ class TestWishlistService(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         new_wishlist = resp.get_json()
         self.assertEqual(new_wishlist["name"], wishlist.name, "Names does not match")
+        self.assertEqual(new_wishlist["type"], wishlist.type, "Type does not match")
         self.assertEqual(new_wishlist["items"], wishlist.items, "Item does not match")
         self.assertEqual(new_wishlist["user_id"], wishlist.user_id, "user_id does not match")
         self.assertEqual(new_wishlist["created_date"], str(wishlist.created_date), "Created Date does not match")

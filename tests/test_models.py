@@ -54,6 +54,7 @@ class TestWishlist(unittest.TestCase):
         fake_wishlist = WishlistFactory()
         wishlist = Wishlist(
             name=fake_wishlist.name, 
+            type=fake_wishlist.type,
             user_id=fake_wishlist.user_id, 
             created_date=fake_wishlist.created_date,
             items=items
@@ -85,12 +86,14 @@ class TestWishlist(unittest.TestCase):
         fake_wishlist = WishlistFactory()
         wishlist = Wishlist(
             name=fake_wishlist.name, 
-            user_id=fake_wishlist.user_id, 
-            created_date=fake_wishlist.created_date 
+            type=fake_wishlist.type,
+            user_id=fake_wishlist.user_id,
+            created_date=fake_wishlist.created_date
         )
         self.assertTrue(wishlist != None)
         self.assertEqual(wishlist.id, None)
         self.assertEqual(wishlist.name, fake_wishlist.name)
+        self.assertEqual(wishlist.type, fake_wishlist.type)
         self.assertEqual(wishlist.user_id, fake_wishlist.user_id)
         self.assertEqual(wishlist.created_date, fake_wishlist.created_date)
 
@@ -125,6 +128,7 @@ class TestWishlist(unittest.TestCase):
         found_wishlist = Wishlist.find(wishlist.id)
         self.assertEqual(found_wishlist.id, wishlist.id)
         self.assertEqual(found_wishlist.name, wishlist.name)
+        self.assertEqual(found_wishlist.type, wishlist.type)
         self.assertEqual(found_wishlist.user_id, wishlist.user_id)
         self.assertEqual(found_wishlist.created_date, wishlist.created_date)
     
@@ -176,6 +180,7 @@ class TestWishlist(unittest.TestCase):
         serial_wishlist = wishlist.serialize()
         self.assertEqual(serial_wishlist['id'], wishlist.id)
         self.assertEqual(serial_wishlist['name'], wishlist.name)
+        self.assertEqual(serial_wishlist['type'], wishlist.type)
         self.assertEqual(serial_wishlist['user_id'], wishlist.user_id)
         self.assertEqual(serial_wishlist['created_date'], str(wishlist.created_date))
         self.assertEqual(len(serial_wishlist['items']), 1)
@@ -197,6 +202,7 @@ class TestWishlist(unittest.TestCase):
         new_wishlist.deserialize(serial_wishlist)
         self.assertEqual(new_wishlist.id, wishlist.id)
         self.assertEqual(new_wishlist.name, wishlist.name)
+        self.assertEqual(new_wishlist.type, wishlist.type)
         self.assertEqual(new_wishlist.user_id, wishlist.user_id)
         self.assertEqual(new_wishlist.created_date, wishlist.created_date)
 

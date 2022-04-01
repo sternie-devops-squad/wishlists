@@ -43,5 +43,6 @@ class WishlistFactory(factory.Factory):
 
     id = factory.Sequence(lambda n: n)
     name = FuzzyChoice(choices=["personal", "gifts", "home improvement"])
+    type = FuzzyChoice(choices=["public", "private"])
     user_id = FuzzyChoice(choices=[1, 2])
     created_date = factory.LazyFunction(datetime.utcnow)
