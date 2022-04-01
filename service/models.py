@@ -141,18 +141,20 @@ class Wishlist(db.Model, PersistentBase):
     # Table Schema
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(64))
+    type = db.Column(db.String(64))
     user_id = db.Column(db.Integer)
     created_date = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     items = db.relationship('Item', backref='wishlist', lazy=True)  
 
     def __repr__(self):
-        return "<Wishlist %r id=[%s]>" % (self.name, self.id)
+        return "<Wishlist %r id=[%s]>" % (self.name, self.type, self.id)
 
     def serialize(self):
         """ Serializes a Wishlist into a dictionary """
         wishlist = {
             "id": self.id,
             "name": self.name,
+            "type": self.type,
             "user_id": self.user_id,
             "created_date": self.created_date.strftime(DATETIME_FORMAT),
             "items": []
@@ -170,6 +172,7 @@ class Wishlist(db.Model, PersistentBase):
         """
         try:
             self.name = data["name"]
+            self.type = data["type"]
             self.user_id = data["user_id"]
             self.created_date = datetime.strptime(data["created_date"], DATETIME_FORMAT)
             # handle inner list of items
