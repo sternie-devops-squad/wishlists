@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/sternie-devops-squad/wishlists/actions/workflows/workflow.yml/badge.svg)](https://github.com/sternie-devops-squad/wishlists/actions)
+[![Build Status](https://github.com/sternie-devops-squad/wishlists/actions/workflows/tdd.yml/badge.svg)](https://github.com/sternie-devops-squad/wishlists/actions)
 
 [![codecov](https://codecov.io/gh/sternie-devops-squad/wishlists/branch/main/graph/badge.svg?token=AHKDLZSPT9)](https://codecov.io/gh/sternie-devops-squad/wishlists)
 
