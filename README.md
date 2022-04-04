@@ -1,3 +1,7 @@
+[![Build Status](https://github.com/sternie-devops-squad/wishlists/actions/workflows/tdd.yml/badge.svg)](https://github.com/sternie-devops-squad/wishlists/actions)
+
+[![codecov](https://codecov.io/gh/sternie-devops-squad/wishlists/branch/main/graph/badge.svg?token=AHKDLZSPT9)](https://codecov.io/gh/sternie-devops-squad/wishlists)
+
 # Wishlists Resource
 
 The wishlists resource allow customers to create a collection of products that they wish they had the money to purchase. At a minimum it should contain a name, a reference to a customer, and a collection of products. A customer might have multiple wish lists so they might want to name them for easy identification. Since this is really a collection of products items, you will need to implement a subordinate  to place wishlist items into the wishlist collection (e.g., / wishlists/{id}/items).
