@@ -19,6 +19,7 @@ DATABASE_URI = os.getenv(
 )
 
 BASE_URL = "/wishlists"
+CONTENT_TYPE_JSON = "application/json"
 
 ######################################################################
 #  T E S T   C A S E S
@@ -374,3 +375,60 @@ class TestWishlistService(TestCase):
             content_type="application/json"
         )
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)       
+
+
+######################################################################
+# T E S T   A C T I O N S
+######################################################################
+
+    def test_purchase_a_item(self):
+        """Purchase an Item"""
+        wishlist = self._create_wishlists(1)[0]
+        item = ItemFactory()
+        item.in_stock = True
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items",
+            json=item.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        item_data = resp.get_json()
+        item_id = item_data["id"]
+        logging.info(f"Created Item with id {item_id} = {item_data}")
+
+        # Request to purchase a Item
+        resp = self.app.put(f"{BASE_URL}/{wishlist.id}/items/{item_id}/purchase")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+
+        # Retrieve the Item and make sue it is purchased
+        resp = self.app.get(f"{BASE_URL}/{wishlist.id}/items/{item_id}")
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        item_data = resp.get_json()
+        self.assertEqual(item_data["id"], item_id)
+        self.assertEqual(item_data["purchased"], True)
+
+    def test_purchase_not_available(self):
+        """Purchase a Item that is not in stock"""
+        wishlist = self._create_wishlists(1)[0]
+        item = ItemFactory()
+        item.in_stock = False
+        resp = self.app.post(
+            f"{BASE_URL}/{wishlist.id}/items",
+            json=item.serialize(), 
+            content_type="application/json"
+        )
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        item_data = resp.get_json()
+        item_id = item_data["id"]
+        logging.info(f"Created Item with id {item_id} = {item_data}")
+
+        # Request to purchase a Item should fail
+        resp = self.app.put(f"{BASE_URL}/{wishlist.id}/items/{item_id}/purchase")
+        self.assertEqual(resp.status_code, status.HTTP_409_CONFLICT)
+
+    def test_purchase_a_item_not_found(self):
+        """Purchase a Item not found"""
+        wishlist = self._create_wishlists(1)[0]
+        resp = self.app.put(f"{BASE_URL}/{wishlist.id}/items/{0}/purchase")
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+    

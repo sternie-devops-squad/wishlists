@@ -233,6 +233,25 @@ def delete_items(wishlist_id, item_id):
     return make_response("", status.HTTP_204_NO_CONTENT)
 
 ######################################################################
+# PURCHASE an ITEM
+######################################################################
+@app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>/purchase", methods=["PUT"])
+def purchase_items(wishlist_id, item_id):
+    """Endpoint to Purchase an item"""
+    app.logger.info("Request to Purchase item with id: %s", item_id)
+
+    item = Item.find(item_id)
+    if not item:
+        abort(status.HTTP_404_NOT_FOUND, f"Item with id '{item_id}' was not found.")
+
+    if not item.in_stock:
+        abort(status.HTTP_409_CONFLICT, f"Item with id '{item_id}' is not available.")
+
+    item.purchased = True
+    item.update()
+    return jsonify(item.serialize()), status.HTTP_200_OK
+
+######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
 
