@@ -16,7 +16,7 @@ class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
     pass
 
-DATETIME_FORMAT='%Y-%m-%d %H:%M:%S.%f'
+DATETIME_FORMAT='%Y-%m-%d' # Note: updated date time format to match UI input field
 
 ######################################################################
 #  P E R S I S T E N T   B A S E   M O D E L
@@ -174,7 +174,7 @@ class Wishlist(db.Model, PersistentBase):
             self.name = data["name"]
             self.type = data["type"]
             self.user_id = data["user_id"]
-            self.created_date = datetime.strptime(data["created_date"], DATETIME_FORMAT)
+            self.created_date = datetime.strptime(data["created_date"], DATETIME_FORMAT).date()
             # handle inner list of items
             item_list = data.get("items")
             for json_item in item_list:

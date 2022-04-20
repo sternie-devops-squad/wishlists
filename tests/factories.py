@@ -45,4 +45,4 @@ class WishlistFactory(factory.Factory):
     name = FuzzyChoice(choices=["personal", "gifts", "home improvement"])
     type = FuzzyChoice(choices=["public", "private"])
     user_id = FuzzyChoice(choices=[1, 2])
-    created_date = factory.LazyFunction(datetime.utcnow)
+    created_date = datetime.strptime("2022/04/01", "%Y/%m/%d").date()
