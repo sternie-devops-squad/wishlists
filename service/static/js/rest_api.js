@@ -16,11 +16,11 @@ $(function () {
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#pet_name").val("");
-        $("#pet_category").val("");
-        $("#pet_available").val("");
-        $("#pet_gender").val("");
-        $("#pet_birthday").val("");
+        $("#wishlist_name").val("");
+        $("#wishlist_type").val("");
+        $("#wishlist_user_id").val("");
+        $("#wishlist_created_id").val("");
+        $("#wishlist_items").val("");
     }
 
     // Updates the flash message area
@@ -70,31 +70,31 @@ $(function () {
 
 
     // ****************************************
-    // Update a Pet
+    // Update a Wishlist
     // ****************************************
 
     $("#update-btn").click(function () {
 
-        let pet_id = $("#pet_id").val();
-        let name = $("#pet_name").val();
-        let category = $("#pet_category").val();
-        let available = $("#pet_available").val() == "true";
-        let gender = $("#pet_gender").val();
-        let birthday = $("#pet_birthday").val();
+        let wishlist_id = $("#wishlist_id").val();
+        let name = $("#wishlist_name").val();
+        let type = $("#wishlist_type").val();
+        let user_id = $("#wishlist_user_id").val();
+        let created_date = $("#wishlist_created_date").val();
+        let items = $("#wishlist_items").val();
 
         let data = {
             "name": name,
-            "category": category,
-            "available": available,
-            "gender": gender,
-            "birthday": birthday
+            "type": type,
+            "user_id": user_id,
+            "created_date": created_date,
+            "items": items
         };
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
                 type: "PUT",
-                url: `/pets/${pet_id}`,
+                url: `/wishlists/${wishlist_id}`,
                 contentType: "application/json",
                 data: JSON.stringify(data)
             })
@@ -111,18 +111,18 @@ $(function () {
     });
 
     // ****************************************
-    // Retrieve a Pet
+    // Retrieve a Wishlist
     // ****************************************
 
     $("#retrieve-btn").click(function () {
 
-        let pet_id = $("#pet_id").val();
+        let wishlist_id = $("#wishlist_id").val();
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/pets/${pet_id}`,
+            url: `/wishlists/${wishlist_id}`,
             contentType: "application/json",
             data: ''
         })
@@ -141,25 +141,25 @@ $(function () {
     });
 
     // ****************************************
-    // Delete a Pet
+    // Delete a Wishlist
     // ****************************************
 
     $("#delete-btn").click(function () {
 
-        let pet_id = $("#pet_id").val();
+        let wishlist_id = $("#wishlist_id").val();
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "DELETE",
-            url: `/pets/${pet_id}`,
+            url: `/wishlists/${wishlist_id}`,
             contentType: "application/json",
             data: '',
         })
 
         ajax.done(function(res){
             clear_form_data()
-            flash_message("Pet has been Deleted!")
+            flash_message("Wishlist has been Deleted!")
         });
 
         ajax.fail(function(res){
@@ -172,46 +172,46 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#pet_id").val("");
+        $("#wishlist_id").val("");
         $("#flash_message").empty();
         clear_form_data()
     });
 
     // ****************************************
-    // Search for a Pet
+    // Search for a Wisshlist
     // ****************************************
 
     $("#search-btn").click(function () {
 
-        let name = $("#pet_name").val();
-        let category = $("#pet_category").val();
-        let available = $("#pet_available").val() == "true";
+        let name = $("#wishlist_id").val();
+        let type = $("#wishlist_type").val();
+        // let available = $("#pet_available").val() == "true";
 
         let queryString = ""
 
         if (name) {
             queryString += 'name=' + name
         }
-        if (category) {
+        if (type) {
             if (queryString.length > 0) {
-                queryString += '&category=' + category
+                queryString += '&type=' + type
             } else {
-                queryString += 'category=' + category
+                queryString += 'type=' + type
             }
         }
-        if (available) {
-            if (queryString.length > 0) {
-                queryString += '&available=' + available
-            } else {
-                queryString += 'available=' + available
-            }
-        }
+        // if (available) {
+        //     if (queryString.length > 0) {
+        //         queryString += '&available=' + available
+        //     } else {
+        //         queryString += 'available=' + available
+        //     }
+        // }
 
         $("#flash_message").empty();
 
         let ajax = $.ajax({
             type: "GET",
-            url: `/pets?${queryString}`,
+            url: `/wishlists?${queryString}`,
             contentType: "application/json",
             data: ''
         })
@@ -223,25 +223,25 @@ $(function () {
             table += '<thead><tr>'
             table += '<th class="col-md-2">ID</th>'
             table += '<th class="col-md-2">Name</th>'
-            table += '<th class="col-md-2">Category</th>'
-            table += '<th class="col-md-2">Available</th>'
-            table += '<th class="col-md-2">Gender</th>'
-            table += '<th class="col-md-2">Birthday</th>'
+            table += '<th class="col-md-2">Type</th>'
+            table += '<th class="col-md-2">User ID</th>'
+            table += '<th class="col-md-2">Created Date</th>'
+            table += '<th class="col-md-2">Items</th>'
             table += '</tr></thead><tbody>'
-            let firstPet = "";
+            let firstWishlist = "";
             for(let i = 0; i < res.length; i++) {
-                let pet = res[i];
-                table +=  `<tr id="row_${i}"><td>${pet._id}</td><td>${pet.name}</td><td>${pet.category}</td><td>${pet.available}</td><td>${pet.gender}</td><td>${pet.birthday}</td></tr>`;
+                let wishlist = res[i];
+                table +=  `<tr id="row_${i}"><td>${wishlist._id}</td><td>${wishlist.name}</td><td>${wishlist.category}</td><td>${wishlist.user_id}</td><td>${wishlist.created_date}</td><td>${wishlist.items}</td></tr>`;
                 if (i == 0) {
-                    firstPet = pet;
+                    firstWishlist = wishlist;
                 }
             }
             table += '</tbody></table>';
             $("#search_results").append(table);
 
             // copy the first result to the form
-            if (firstPet != "") {
-                update_form_data(firstPet)
+            if (firstWishlist != "") {
+                update_form_data(firstWishlist)
             }
 
             flash_message("Success")
