@@ -5,21 +5,22 @@ Feature: The wishlist service back-end
 
 Background:
     Given the following wishlists
-        | name       | type     | user_id | created_date|
-        | home       | personal | 1       | 2019-11-18  |
-        | work       | public   | 2       | 2020-08-13  |
-        | garden     | personal | 3       | 2021-04-01  |
-        | tech       | public   | 4       | 2018-06-04  |
+        | name       | type     | user_id | created_date| items       |
+        | home       | personal | 1       | 2019-11-18  | home_item   |
+        | work       | public   | 2       | 2020-08-13  | work_item   |
+        | garden     | personal | 3       | 2021-04-01  | garden_item |
+        | tech       | public   | 4       | 2018-06-04  | tech_item   |
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Wishlist RESTful Service" in the title
+    Then I should see "Wishlist Demo RESTful Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Wishlist
     When I visit the "Home Page"
     And I set the "Name" to "Summer"
-    And I select "Public" in the "Type" dropdown
+    And I set the "Type" to "Public"
+    And I set the "User_ID" to "123"
     And I set the "Created_Date" to "04-20-2022"
     And I press the "Create" button
     Then I should see the message "Success"
@@ -31,7 +32,7 @@ Scenario: Create a Wishlist
     When I paste the "Id" field
     And I press the "Retrieve" button
     Then I should see "Summer" in the "Name" field
-    And I should see "Public" in the "Type" dropdown
+    And I should see "Public" in the "Type" field
     And I should see "04-20-2022" in the "Created_Date" field
 
 Scenario: List all wishlists
@@ -39,16 +40,15 @@ Scenario: List all wishlists
     And I press the "Search" button
     Then I should see "home" in the results
     And I should see "work" in the results
-    And I should not see "garden" in the results
-    And I should not see "tech" in the results
+    And I should see "garden" in the results
+    And I should see "tech" in the results
 
-
-Scenario: Search for personal
+Scenario: Search for tech
     When I visit the "Home Page"
-    And I set the "Type" to "personal"
+    And I set the "Name" to "tech"
     And I press the "Search" button
-    Then I should see "home" in the results
-    And I should not see "garden" in the results
+    Then I should see "4" in the "User_ID" field
+    And I should not see "1" in the "User_ID" field
 
 # Scenario: Search for available
 #     When I visit the "Home Page"

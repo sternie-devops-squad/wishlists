@@ -35,7 +35,7 @@ def step_impl(context):
     context.resp = requests.get(context.base_url + '/wishlists', headers=headers)
     expect(context.resp.status_code).to_equal(200)
     for wishlist in context.resp.json():
-        context.resp = requests.delete(context.base_url + '/wishlists/' + str(wishlist["_id"]), headers=headers)
+        context.resp = requests.delete(context.base_url + '/wishlists/' + str(wishlist["id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
     
     # load the database with new wishlists
@@ -46,6 +46,7 @@ def step_impl(context):
             "type": row['type'],
             "user_id": row['user_id'],
             "created_date": row['created_date'],
+            "items": [] # Need to update
         }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)
