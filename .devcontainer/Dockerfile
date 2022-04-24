@@ -1,6 +1,9 @@
 # Image for a Python 3 development environment
 FROM python:3.9-slim
 
+# This image has selenium and chrome driver already installed
+FROM rofrano/pipeline-selenium:latest
+
 # Add any tools that are needed beyond Python 3.9
 RUN apt-get update && \
     apt-get install -y sudo vim git zip tree curl wget jq && \
