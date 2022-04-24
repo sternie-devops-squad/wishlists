@@ -59,12 +59,11 @@ Scenario: Search for personal
 #     And I should see "sammy" in the results
 #     And I should not see "leo" in the results
 
-Scenario: Update a Pet
+Scenario: Update a Wishlist
     When I visit the "Home Page"
     And I set the "Name" to "home"
     And I press the "Search" button
     Then I should see "home" in the "Name" field
-    And I should see "personal" in the "Type" field
     When I change "Name" to "apartment"
     And I press the "Update" button
     Then I should see the message "Success"
@@ -76,4 +75,4 @@ Scenario: Update a Pet
     When I press the "Clear" button
     And I press the "Search" button
     Then I should see "apartment" in the results
-    Then I should not see "home" in the results
+    And I should not see "home" in the results

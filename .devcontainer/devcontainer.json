@@ -24,6 +24,6 @@
         "mikestead.dotenv",
         "redhat.fabric8-analytics"
 	],
-	//"forwardPorts": [8000],
-	//"postCreateCommand": "sudo pip install -U pip wheel && sudo pip install -r requirements.txt"
+	//"forwardPorts": [8080],
+	"postCreateCommand": "sudo pip install -U pip wheel && sudo pip install -r requirements.txt"
 }
