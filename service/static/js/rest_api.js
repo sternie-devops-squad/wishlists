@@ -39,7 +39,7 @@ $(function () {
         let type = $("#wishlist_type").val();
         let user_id = $("#wishlist_user_id").val();
         let created_date = $("#wishlist_created_date").val();
-        let items = []; // Note: items field needs to be constructed
+        let items = $("#wishlist_items").val();; // Note: items data in
 
         let data = {
             "name": name,
@@ -87,7 +87,7 @@ $(function () {
             "type": type,
             "user_id": user_id,
             "created_date": created_date,
-            "items": items
+            "items": [] // TODO - update items
         };
 
         $("#flash_message").empty();
@@ -178,12 +178,12 @@ $(function () {
     });
 
     // ****************************************
-    // Search for a Wisshlist
+    // Search for a Wishlist
     // ****************************************
 
     $("#search-btn").click(function () {
 
-        let name = $("#wishlist_id").val();
+        let name = $("#wishlist_name").val();
         let type = $("#wishlist_type").val();
         // let available = $("#pet_available").val() == "true";
 
