@@ -5,15 +5,15 @@ Feature: The wishlist service back-end
 
 Background:
     Given the following wishlists
-        | name       | type     | user_id | created_date| items       |
-        | home       | personal | 1       | 2019-11-18  | home_item   |
-        | work       | public   | 2       | 2020-08-13  | work_item   |
-        | garden     | personal | 3       | 2021-04-01  | garden_item |
-        | tech       | public   | 4       | 2018-06-04  | tech_item   |
+        | name       | type     | user_id | created_date|
+        | home       | personal | 1       | 2019-11-18  |
+        | work       | public   | 2       | 2020-08-13  |
+        | garden     | personal | 3       | 2021-04-01  |
+        | tech       | public   | 4       | 2018-06-04  |
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Wishlist Demo RESTful Service" in the title
+    Then I should see "Wishlist Demo REST API Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Wishlist

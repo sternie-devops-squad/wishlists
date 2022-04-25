@@ -46,7 +46,7 @@ def step_impl(context):
             "type": row['type'],
             "user_id": row['user_id'],
             "created_date": row['created_date'],
-            "items": [] # WIP: still need to enable items for purchase action
+            "items": []
         }
         payload = json.dumps(data)
         context.resp = requests.post(create_url, data=payload, headers=headers)

@@ -254,7 +254,8 @@ def purchase_items(wishlist_id, item_id):
 
     item.purchased = True
     item.update()
-    return jsonify(item.serialize()), status.HTTP_200_OK
+
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
