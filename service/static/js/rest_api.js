@@ -6,7 +6,7 @@ $(function () {
 
     // Updates the form with data from the response
     function update_form_data(res) {
-        $("#wishlist_id").val(res._id);
+        $("#wishlist_id").val(res.id);
         $("#wishlist_name").val(res.name);
         $("#wishlist_type").val(res.type);
         $("#wishlist_user_id").val(res.user_id);
@@ -231,7 +231,7 @@ $(function () {
             let firstWishlist = "";
             for(let i = 0; i < res.length; i++) {
                 let wishlist = res[i];
-                table +=  `<tr id="row_${i}"><td>${wishlist._id}</td><td>${wishlist.name}</td><td>${wishlist.category}</td><td>${wishlist.user_id}</td><td>${wishlist.created_date}</td><td>${wishlist.items}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.name}</td><td>${wishlist.type}</td><td>${wishlist.user_id}</td><td>${wishlist.created_date}</td><td>${wishlist.items}</td></tr>`;
                 if (i == 0) {
                     firstWishlist = wishlist;
                 }
@@ -244,6 +244,47 @@ $(function () {
                 update_form_data(firstWishlist)
             }
 
+            flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // (WIP) Purchase an Item in a Wishlist
+    // ****************************************
+
+    $("#purchase-btn").click(function () {
+
+        let wishlist_id = $("#wishlist_id").val();
+        //let name = $("#wishlist_name").val();
+        //let type = $("#wishlist_type").val();
+        //let user_id = $("#wishlist_user_id").val();
+        //let created_date = $("#wishlist_created_date").val();
+        //let items = $("#wishlist_items").val();
+
+        let data = {
+            "name": name,
+            "type": type,
+            "user_id": user_id,
+            "created_date": created_date,
+            "items": [] // TODO - update items
+        };
+
+        $("#flash_message").empty();
+        // @app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>/purchase", methods=["PUT"])
+        let ajax = $.ajax({
+                type: "PUT",
+                url: `/wishlists/${wishlist_id}/items/${item_id}/purchase`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_form_data(res)
             flash_message("Success")
         });
 

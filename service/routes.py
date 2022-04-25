@@ -238,6 +238,8 @@ def delete_items(wishlist_id, item_id):
 ######################################################################
 # PURCHASE an ITEM
 ######################################################################
+# WIP: need to update for behave test
+
 @app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>/purchase", methods=["PUT"])
 def purchase_items(wishlist_id, item_id):
     """Endpoint to Purchase an item"""

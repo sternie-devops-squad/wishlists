@@ -21,7 +21,7 @@ Scenario: Create a Wishlist
     And I set the "Name" to "Summer"
     And I set the "Type" to "Public"
     And I set the "User_ID" to "123"
-    And I set the "Created_Date" to "04-20-2022"
+    And I set the "Created_Date" to "05-20-2022"
     And I press the "Create" button
     Then I should see the message "Success"
     When I copy the "Id" field
@@ -33,7 +33,7 @@ Scenario: Create a Wishlist
     And I press the "Retrieve" button
     Then I should see "Summer" in the "Name" field
     And I should see "Public" in the "Type" field
-    And I should see "04-20-2022" in the "Created_Date" field
+    And I should see "123" in the "User_ID" field
 
 Scenario: List all wishlists
     When I visit the "Home Page"
@@ -47,17 +47,8 @@ Scenario: Search for tech
     When I visit the "Home Page"
     And I set the "Name" to "tech"
     And I press the "Search" button
-    Then I should see "4" in the "User_ID" field
-    And I should not see "1" in the "User_ID" field
-
-# Scenario: Search for available
-#     When I visit the "Home Page"
-#     And I select "True" in the "Available" dropdown
-#     And I press the "Search" button
-#     Then I should see "fido" in the results
-#     And I should see "kitty" in the results
-#     And I should see "sammy" in the results
-#     And I should not see "leo" in the results
+    Then I should see "public" in the "Type" field
+    And I should see "4" in the "User_ID" field
 
 Scenario: Update a Wishlist
     When I visit the "Home Page"
