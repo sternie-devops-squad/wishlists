@@ -11,11 +11,17 @@ $(function () {
         $("#wishlist_type").val(res.type);
         $("#wishlist_user_id").val(res.user_id);
         $("#wishlist_created_date").val(res.created_date);
-        $("#wishlist_items").val(res.items);
     }
 
+    // Updates the form with data from the response
+    function update_item_form_data(res) {
+        $("#wishlist_item_id").val(res.id);
+        $("#wishlist_item_name").val(res.name);
+        $("#wishlist_item_purchased").val(res.purchased);
+    }
     /// Clears all form fields
     function clear_form_data() {
+        $("#wishlist_id").val("");
         $("#wishlist_name").val("");
         $("#wishlist_type").val("");
         $("#wishlist_user_id").val("");
@@ -87,7 +93,7 @@ $(function () {
             "type": type,
             "user_id": user_id,
             "created_date": created_date,
-            "items": [] // TODO - update items
+            "items": []
         };
 
         $("#flash_message").empty();
@@ -102,6 +108,48 @@ $(function () {
         ajax.done(function(res){
             update_form_data(res)
             flash_message("Success")
+        });
+
+        ajax.fail(function(res){
+            flash_message(res.responseJSON.message)
+        });
+
+    });
+
+    // ****************************************
+    // Add Item to a Wishlist
+    // ****************************************
+
+    $("#item-btn").click(function () {
+
+        let wishlist_id = $("#wishlist_id").val(); //need to specify a wishlist id first
+        let name = $("#wishlist_item_name").val();
+        let category = $("#wishlist_item_category").val();
+        let price = $("#wishlist_item_price").val();
+        //let in_stock = $("#item_in_stock").val();
+        //let purchased = $("#item_purchased").val();
+
+        let data = {
+            "wishlist_id": wishlist_id,
+            "name": name,
+            "category": category,
+            "price": price
+            // "in_stock": in_stock,
+            // "purchased": purchased
+        };
+
+        $("#flash_message").empty();
+
+        let ajax = $.ajax({
+                type: "POST",
+                url: `/wishlists/${wishlist_id}/items`,
+                contentType: "application/json",
+                data: JSON.stringify(data)
+            })
+
+        ajax.done(function(res){
+            update_item_form_data(res)
+            flash_message("Success: Item added to Wishlist")
         });
 
         ajax.fail(function(res){
@@ -231,7 +279,7 @@ $(function () {
             let firstWishlist = "";
             for(let i = 0; i < res.length; i++) {
                 let wishlist = res[i];
-                table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.name}</td><td>${wishlist.type}</td><td>${wishlist.user_id}</td><td>${wishlist.created_date}</td><td>${wishlist.items}</td></tr>`;
+                table +=  `<tr id="row_${i}"><td>${wishlist.id}</td><td>${wishlist.name}</td><td>${wishlist.type}</td><td>${wishlist.user_id}</td><td>${wishlist.created_date}</td><td>${wishlist.items[0]}</td></tr>`;
                 if (i == 0) {
                     firstWishlist = wishlist;
                 }
@@ -260,19 +308,20 @@ $(function () {
     $("#purchase-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val();
+        let item_id = $("#wishlist_item_id").val();
         //let name = $("#wishlist_name").val();
         //let type = $("#wishlist_type").val();
         //let user_id = $("#wishlist_user_id").val();
         //let created_date = $("#wishlist_created_date").val();
         //let items = $("#wishlist_items").val();
 
-        let data = {
-            "name": name,
-            "type": type,
-            "user_id": user_id,
-            "created_date": created_date,
-            "items": [] // TODO - update items
-        };
+        // let data = {
+        //     "name": name,
+        //     "type": type,
+        //     "user_id": user_id,
+        //     "created_date": created_date,
+        //     "items": [] // TODO - update items
+        // };
 
         $("#flash_message").empty();
         // @app.route("/wishlists/<int:wishlist_id>/items/<int:item_id>/purchase", methods=["PUT"])
@@ -280,16 +329,17 @@ $(function () {
                 type: "PUT",
                 url: `/wishlists/${wishlist_id}/items/${item_id}/purchase`,
                 contentType: "application/json",
-                data: JSON.stringify(data)
+                // data: JSON.stringify(data)
+                data: ''
             })
 
         ajax.done(function(res){
-            update_form_data(res)
-            flash_message("Success")
+            update_item_form_data(res)
+            flash_message("Success: Item Purchased!")
         });
 
         ajax.fail(function(res){
-            flash_message(res.responseJSON.message)
+            flash_message("Failed to Purchase Item")
         });
 
     });

@@ -71,11 +71,43 @@
               </div>
             </div>
 
-            <!-- ITEMS -->
+            <!-- ITEM ID -->
             <div class="form-group">
-              <label class="control-label col-sm-2" for="wishlist_items">Items:</label>
+              <label class="control-label col-sm-2" for="wishlist_item_id">Item ID:</label>
               <div class="col-sm-10">
-                <input type="text" class="form-control" id="wishlist_items" placeholder="Enter Items for Wishlist">
+                <input type="text" class="form-control" id="wishlist_item_id" placeholder="Item ID">
+              </div>
+            </div>
+
+            <!-- ITEM Name -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="wishlist_item_name">Item Name:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="wishlist_item_name" placeholder="Item Name">
+              </div>
+            </div>
+
+            <!-- ITEM Category -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="wishlist_item_category">Item Category:</label>
+              <div class="col-sm-10">
+                <input type="text" class="form-control" id="wishlist_item_category" placeholder="Item Category">
+              </div>
+            </div>
+
+            <!-- ITEM Price -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="wishlist_item_price">Item Price:</label>
+              <div class="col-sm-10">
+                <input type="integer" class="form-control" id="wishlist_item_price" placeholder="Item Price">
+              </div>
+            </div>
+
+            <!-- ITEM Purchased -->
+            <div class="form-group">
+              <label class="control-label col-sm-2" for="wishlist_item_purchased">Item Purchased:</label>
+              <div class="col-sm-10">
+                <input type="boolean" class="form-control" id="wishlist_item_purchased" placeholder="Purchased">
               </div>
             </div>
 
@@ -86,6 +118,7 @@
                 <button type="submit" class="btn btn-primary" id="clear-btn">Clear</button>
                 <button type="submit" class="btn btn-success" id="create-btn">Create</button>
                 <button type="submit" class="btn btn-warning" id="update-btn">Update</button>
+                <button type="submit" class="btn btn-warning" id="item-btn">Add Item</button>
                 <button type="submit" class="btn btn-warning" id="purchase-btn">Purchase Item</button>
               </div>
             </div>

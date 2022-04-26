@@ -134,7 +134,13 @@ def delete_wishlists(wishlist_id):
     """
     app.logger.info("Request to delete wishlist with id: %s", wishlist_id)
     wishlist = Wishlist.find(wishlist_id)
+    
     if wishlist:
+         # new code to check if wishlist is empty
+        if wishlist.items:
+            for item in wishlist.items:
+                item.delete()
+            
         wishlist.delete()
     return make_response("", status.HTTP_204_NO_CONTENT)
 
@@ -254,7 +260,8 @@ def purchase_items(wishlist_id, item_id):
 
     item.purchased = True
     item.update()
-    return jsonify(item.serialize()), status.HTTP_200_OK
+
+    return make_response(jsonify(item.serialize()), status.HTTP_200_OK)
 
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
