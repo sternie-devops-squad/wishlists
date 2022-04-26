@@ -13,7 +13,7 @@ Background:
 
 Scenario: The server is running
     When I visit the "Home Page"
-    Then I should see "Wishlist Demo REST API Service" in the title
+    Then I should see "Wishlist Demo RESTful Service" in the title
     And I should not see "404 Not Found"
 
 Scenario: Create a Wishlist
@@ -67,3 +67,33 @@ Scenario: Update a Wishlist
     And I press the "Search" button
     Then I should see "apartment" in the results
     And I should not see "home" in the results
+
+Scenario: Add an Item to Wishlist
+    When I visit the "Home Page"
+    And I set the "Name" to "tech"
+    And I press the "Search" button
+    Then I should see "tech" in the "Name" field
+    When I set the "Item Name" to "new laptop"
+    And I set the "Item Category" to "laptop"
+    And I set the "Item Price" to "200"
+    And I press the "Item" button
+    Then I should see the message "Success: Item added to Wishlist"
+    
+Scenario: Delete a Wishlist
+    When I visit the "Home Page"
+    And I set the "Name" to "home"
+    And I press the "Search" button
+    Then I should see "home" in the "Name" field
+    When I copy the "Id" field
+    And I press the "Delete" button
+    Then I should see the message "Wishlist has been Deleted!"
+    
+    # Scenario: Purchase an Item in a Wishlist
+    # WIP...
+    # And I paste the "Id" field
+    # And I press the "Retrieve" button
+    # Then I should see "apartment" in the "Name" field
+    # When I press the "Clear" button
+    # And I press the "Search" button
+    # Then I should see "apartment" in the results
+    # And I should not see "home" in the results

@@ -116,8 +116,10 @@ class Item(db.Model, PersistentBase):
             self.name = data["name"]
             self.category = data["category"]
             self.price = data["price"]
-            #   self.in_stock = data["in_stock"]
-            #   self.purchased = data["purchased"]
+         
+            # Note: need to fix the below for nosetests
+            # self.in_stock = data["in_stock"]
+            # self.purchased = data["purchased"]
         except KeyError as error:
             raise DataValidationError("Invalid Item: missing " + error.args[0])
         except TypeError as error:

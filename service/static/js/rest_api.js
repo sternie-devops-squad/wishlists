@@ -15,9 +15,9 @@ $(function () {
 
     // Updates the form with data from the response
     function update_item_form_data(res) {
-        $("#item_id").val(res.id);
-        $("#item_name").val(res.name);
-        $("#item_purchased").val(res.purchased);
+        $("#wishlist_item_id").val(res.id);
+        $("#wishlist_item_name").val(res.name);
+        $("#wishlist_item_purchased").val(res.purchased);
     }
     /// Clears all form fields
     function clear_form_data() {
@@ -123,9 +123,9 @@ $(function () {
     $("#item-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val(); //need to specify a wishlist id first
-        let name = $("#item_name").val();
-        let category = $("#item_category").val();
-        let price = $("#item_price").val();
+        let name = $("#wishlist_item_name").val();
+        let category = $("#wishlist_item_category").val();
+        let price = $("#wishlist_item_price").val();
         //let in_stock = $("#item_in_stock").val();
         //let purchased = $("#item_purchased").val();
 
@@ -308,7 +308,7 @@ $(function () {
     $("#purchase-btn").click(function () {
 
         let wishlist_id = $("#wishlist_id").val();
-        let item_id = $("#item_id").val();
+        let item_id = $("#wishlist_item_id").val();
         //let name = $("#wishlist_name").val();
         //let type = $("#wishlist_type").val();
         //let user_id = $("#wishlist_user_id").val();

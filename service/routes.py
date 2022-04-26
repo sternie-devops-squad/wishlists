@@ -134,7 +134,13 @@ def delete_wishlists(wishlist_id):
     """
     app.logger.info("Request to delete wishlist with id: %s", wishlist_id)
     wishlist = Wishlist.find(wishlist_id)
+    
     if wishlist:
+         # new code to check if wishlist is empty
+        if wishlist.items:
+            for item in wishlist.items:
+                item.delete()
+            
         wishlist.delete()
     return make_response("", status.HTTP_204_NO_CONTENT)
 

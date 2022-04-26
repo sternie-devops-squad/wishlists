@@ -34,6 +34,8 @@ def step_impl(context):
     # list all of the wishlists and delete them one by one
     context.resp = requests.get(context.base_url + '/wishlists', headers=headers)
     expect(context.resp.status_code).to_equal(200)
+    # note: deleting wishlist with items are causing errors
+    
     for wishlist in context.resp.json():
         context.resp = requests.delete(context.base_url + '/wishlists/' + str(wishlist["id"]), headers=headers)
         expect(context.resp.status_code).to_equal(204)
