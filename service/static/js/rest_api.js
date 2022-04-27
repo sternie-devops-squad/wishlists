@@ -302,7 +302,7 @@ $(function () {
     });
 
     // ****************************************
-    // (WIP) Purchase an Item in a Wishlist
+    // Action: Purchase an Item in a Wishlist
     // ****************************************
 
     $("#purchase-btn").click(function () {
