@@ -87,13 +87,17 @@ Scenario: Delete a Wishlist
     When I copy the "Id" field
     And I press the "Delete" button
     Then I should see the message "Wishlist has been Deleted!"
-    
-    # Scenario: Purchase an Item in a Wishlist
-    # WIP...
-    # And I paste the "Id" field
-    # And I press the "Retrieve" button
-    # Then I should see "apartment" in the "Name" field
-    # When I press the "Clear" button
-    # And I press the "Search" button
-    # Then I should see "apartment" in the results
-    # And I should not see "home" in the results
+
+# Action Scenario
+Scenario: Purchase an Item in a Wishlist
+    When I visit the "Home Page"
+    And I set the "Name" to "tech"
+    And I press the "Search" button
+    Then I should see "tech" in the "Name" field
+    When I set the "Item Name" to "another laptop"
+    And I set the "Item Category" to "laptop"
+    And I set the "Item Price" to "160"
+    And I press the "Item" button
+    Then I should see the message "Success: Item added to Wishlist"
+    When I press the "Purchase" button
+    Then I should see the message "Success: Item Purchased!"
