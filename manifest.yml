@@ -7,7 +7,7 @@ applications:
   instances: 1
   memory: 128M
   hostname: nyu-wishlist-service-sp2201
-  domain: us-south.cf.appdomain.cloud
+  domain: wishlists.us-south.cf.appdomain.cloud
   disk_quota: 1024M
   buildpack: python_buildpack
   timeout: 180
