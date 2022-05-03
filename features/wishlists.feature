@@ -62,7 +62,8 @@ Scenario: Update a Wishlist
     And I press the "Clear" button
     And I paste the "Id" field
     And I press the "Retrieve" button
-    Then I should see "apartment" in the "Name" field
+    Then I should see the message "Success"
+    And I should see "apartment" in the "Name" field
 #    When I press the "Clear" button
 #    And I press the "Search" button
 #    Then I should see "apartment" in the results
