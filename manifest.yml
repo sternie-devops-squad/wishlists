@@ -1,4 +1,4 @@
-# This manifest deploys a Python Flask application with a Cloudant database
+# This manifest deploys a Python Flask application with an ElephantSQL database
 # To change the hostname deploy with:
 #   cf push "${CF_APP}" -n <new-hostname>
 applications:
