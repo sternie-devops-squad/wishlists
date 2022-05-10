@@ -35,8 +35,8 @@ jobs:
 
 
     steps:
-      # - name: Wishlists
-      #   uses: actions/wishlists@v2
+      - name: Checkout
+        uses: actions/checkout@v2
 
       - name: Install libraries for PostgreSQL
         run: |
