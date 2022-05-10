@@ -146,3 +146,5 @@ Copyright (c) NYU Sternie Devops Wishlist Team. All rights reserved.
 Licensed under the Apache License. See [LICENSE](LICENSE)
 
 This repo is a Team Project for NYU masters class: **CSCI-GA.2820-001 DevOps and Agile Methodologies** taught by _John Rofrano_. The Wishlist Team members are: _Aaron Weber, Sean Bates, Fei Han, Nikita Hussain, and Lydnsey Kaplan_.
+
+Thank you John for your guidance & support over the course of this project!
